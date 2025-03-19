@@ -16,4 +16,4 @@ test_listes: test_listes.c plateau.o listes.o utiles.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
-	rm -f $(EXECUTABLES) *.o *.gch
+	rm -f $(EXECUTABLES) *.o

@@ -1,6 +1,7 @@
 #ifndef _LISTES_H_
 #define _LISTES_H_
 
+#include <stdbool.h>
 #include "utiles.h"
 
 typedef struct _s_cell_ {
@@ -18,6 +19,10 @@ ListeCoor* init_liste_coor();
 
 void ajouter_element_liste_coor(ListeCoor* l, Coordonnees coor);
 
+bool liste_coor_contient(ListeCoor* l, Coordonnees coor);
+
 UINT taille_liste_coor(ListeCoor* l);
+
+void afficher_liste_coor(ListeCoor* l);
 
 #endif
