@@ -1,14 +1,14 @@
 #!/bin/sh
 make test_plateau
-PLATEAUX_INCORRECTS=$(ls plateaux/incorrects/*.txt)
+PLATEAUX_CORRECTS=$(ls plateaux/*.txt)
 NB_TESTS_OK=0
 NB_TESTS_KO=0
 
-for PLATEAU_INCORRECT in $PLATEAUX_INCORRECTS
+for PLATEAU_CORRECT in $PLATEAUX_CORRECTS
 do
-    echo "\033[33m[+] Test $PLATEAU_INCORRECT:\033[0m"
-    ./test_plateau $PLATEAU_INCORRECT > /dev/null
-    if [ $? -eq 1 ]
+    echo "\033[33m[+] Test $PLATEAU_CORRECT:\033[0m"
+    ./test_plateau $PLATEAU_CORRECT > /dev/null
+    if [ $? -eq 0 ]
     then
         echo "\033[30;42mOK\033[0m"
         NB_TESTS_OK=$((NB_TESTS_OK+1))

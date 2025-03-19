@@ -1,6 +1,7 @@
 #ifndef _PLATEAU_H_
 #define _PLATEAU_H_
 
+#include <stdbool.h>
 #include "listes.h"
 #include "utiles.h"
 
