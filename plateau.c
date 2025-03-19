@@ -73,7 +73,7 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
 
     // Lecture de la dimension du plateau
     fscanf(f_plateau, "%d", &dim);
-    if (dim < 2 || dim > 9) return DimensionIncorrecte;
+    if (dim < 2 || dim > DIM_MAX) return DimensionIncorrecte;
     P->dim = dim;
     
     // Lecture du nombre de salles du plateau
