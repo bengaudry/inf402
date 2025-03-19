@@ -66,7 +66,7 @@ void erreur_plateau(ErreurPlateau err) {
 ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     FILE *f_plateau;
     UINT dim, nb_salles;
-    UINT nb_fleches = 0, total_cases_salles = 0, nb_cases_total;
+    UINT nb_fleches = 0, total_cases_salles = 0, nb_cases_total = 0;
     
     f_plateau = fopen(chemin, "r");
     if (f_plateau == NULL) return ErreurFichier;

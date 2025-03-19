@@ -1,11 +1,13 @@
 CC=clang
-CFLAGS=-Wall -Werror
+CFLAGS=-Werror
 
-EXECUTABLES = test_plateau test_listes
-all: $(EXECUTABLES)
+EXECUTABLES = test_plateau test_listes main
 
 %.o: %.c %.h
-	$(CC) -c $<
+	$(CC) $(CFLAGS) -c $<
+
+main: main.c plateau.o listes.o utiles.o
+	$(CC) $(CFLAGS) -o $@ $^
 
 test_plateau: test_plateau.c plateau.o listes.o utiles.o
 	$(CC) $(CFLAGS) -o $@ $^
