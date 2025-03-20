@@ -5,11 +5,6 @@
 #include "listes.h"
 #include "utiles.h"
 
-#define DIM_MAX 99
-
-typedef enum { TypeFleche, TypeNombre, TypeVide } TypeCase;
-typedef enum { Nord, Sud, Est, Ouest } Orientation;
-
 typedef enum {
     OK,
     ErreurFichier,
@@ -26,13 +21,8 @@ typedef enum {
 } ErreurPlateau;
 
 typedef struct {
-    Orientation or;
-    Coordonnees case_pointée;
-} Fleche;
-
-typedef struct {
     Fleche fleche;
-    UINT nombre;
+    int nombre;
 } ValeurCase;
 
 typedef struct {
@@ -43,17 +33,24 @@ typedef struct {
 
 typedef struct {
     ListeCoor *liste_coor;
-    UINT taille;
+    int taille;
 } Salle;
 
 typedef struct {
-    Case cases[DIM_MAX][DIM_MAX];
+    Case grille[DIM_MAX][DIM_MAX];
     Salle salles[DIM_MAX];
-    UINT nb_salles;
-    UINT dim;
+    int nb_salles;
+    int dim;
 } Plateau;
 
-Case get_case(Plateau P, UINT x, UINT y);
+int get_dim_plateau(Plateau P);
+int get_nb_salles_plateau(Plateau P);
+
+Case get_case(Plateau P, int x, int y);
+void set_case(Plateau *P, int x, int y, Case c);
+
+Salle get_salle_plateau(Plateau P, int i);
+void ajouter_salle_plateau(Plateau *P, ListeCoor *liste_coor, int taille);
 
 /* Retourne true si les coordonées de la case sont correctes pour ce plateau */
 bool case_dans_plateau(Plateau P, Coordonnees coor);

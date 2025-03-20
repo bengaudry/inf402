@@ -1,13 +1,24 @@
-#ifndef _TYPES_H_
-#define _TYPES_H_
+#ifndef _UTIL_H_
+#define _UTIL_H_
 
-typedef unsigned int UINT;
+#define DIM_MAX 99
+
+typedef enum { TypeFleche, TypeNombre, TypeVide } TypeCase;
+typedef enum { Nord, Sud, Est, Ouest } Orientation;
 
 typedef struct {
-    UINT x;
-    UINT y;
+    int x;
+    int y;
 } Coordonnees;
 
-Coordonnees creer_coor(UINT x, UINT y);
+typedef struct {
+    Orientation or;
+    Coordonnees case_pointee;
+} Fleche;
+
+Coordonnees creer_coor(int x, int y);
+Fleche creer_fleche(Orientation or, Coordonnees case_pointee);
+Orientation get_orientation_fleche(Fleche f);
+Coordonnees get_case_pointee_fleche(Fleche f);
 
 #endif

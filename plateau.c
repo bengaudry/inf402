@@ -7,8 +7,32 @@
 #include "plateau.h"
 #include "listes.h"
 
-Case get_case(Plateau P, UINT x, UINT y) {
-    return P.cases[x][y];
+int get_dim_plateau(Plateau P) {
+    return P.dim;
+}
+
+int get_nb_salles_plateau(Plateau P) {
+    return P.nb_salles;
+}
+
+Case get_case(Plateau P, int x, int y) {
+    return P.grille[x][y];
+}
+
+void set_case(Plateau *P, int x, int y, Case c) {
+    P->grille[x][y] = c;
+}
+
+Salle get_salle_plateau(Plateau P, int i) {
+    return P.salles[i];
+}
+
+void ajouter_salle_plateau(Plateau *P, ListeCoor *liste_coor, int taille) {
+    Salle s;
+    s.liste_coor = liste_coor;
+    s.taille = taille;
+    P->salles[P->nb_salles] = s;
+    P->nb_salles++;
 }
 
 /* Retourne true si les coordonées de la case sont correctes pour ce plateau */
@@ -65,11 +89,12 @@ void erreur_plateau(ErreurPlateau err) {
 /* Lit un fichier plateau et crée un plateau avec les données lues */
 ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     FILE *f_plateau;
-    UINT dim, nb_salles;
-    UINT nb_fleches = 0, total_cases_salles = 0, nb_cases_total = 0;
+    int dim, nb_salles;
+    int nb_fleches = 0, total_cases_salles = 0, nb_cases_total = 0;
     
     f_plateau = fopen(chemin, "r");
     if (f_plateau == NULL) return ErreurFichier;
+
 
     // Lecture de la dimension du plateau
     fscanf(f_plateau, "%d", &dim);
@@ -79,11 +104,11 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     // Lecture du nombre de salles du plateau
     fscanf(f_plateau, "%d", &nb_salles);
     if (nb_salles < 2 || nb_salles > dim*dim) return NbSallesIncorrect;
-    P->nb_salles = nb_salles;
+    P->nb_salles = 0; // Le nombre de salles est automatiquement incrémenté dans la fonction ajouter_salle_plateau
 
     // Lecture des salles
     for (int i = 1; i <= nb_salles; i++) {
-        UINT taille_salle;
+        int taille_salle;
         ListeCoor *liste_coor_salles = init_liste_coor();
 
         if (!fscanf(f_plateau, "%d", &taille_salle)) return SallesManquantes;
@@ -98,7 +123,7 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
             ajouter_element_liste_coor(liste_coor_salles, coor);
         }
 
-        P->salles[i].liste_coor = liste_coor_salles;
+        ajouter_salle_plateau(P, liste_coor_salles, taille_salle);
     }
 
     // Récupération des cases
@@ -123,52 +148,45 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
                 case '<':
                     nb_fleches++;
                     c.type = TypeFleche;
-                    fleche.or = Ouest;
                     coor = creer_coor(x-1, y);
                     if (!case_dans_plateau(*P, coor)) return FlechePointeDehors;
-                    fleche.case_pointée = coor;
+                    fleche = creer_fleche(Ouest, coor);
                     val_case.fleche = fleche;
                     break;
                 case '>':
                     nb_fleches++;
                     c.type = TypeFleche;
-                    fleche.or = Est;
                     coor = creer_coor(x+1, y);
                     if (!case_dans_plateau(*P, coor)) return FlechePointeDehors;
-                    fleche.case_pointée = coor;
+                    fleche = creer_fleche(Est, coor);
                     val_case.fleche = fleche;
                     break;
                 case 'v':
                     nb_fleches++;
                     c.type = TypeFleche;
-                    fleche.or = Sud;
                     coor = creer_coor(x, y+1);
                     if (!case_dans_plateau(*P, coor)) return FlechePointeDehors;
-                    fleche.case_pointée = coor;
+                    fleche = creer_fleche(Sud, coor);
                     val_case.fleche = fleche;
                     break;
                 case '^':
                     nb_fleches++;
                     c.type = TypeFleche;
-                    fleche.or = Nord;
                     coor = creer_coor(x, y-1);
                     if (!case_dans_plateau(*P, coor)) return FlechePointeDehors;
-                    fleche.case_pointée = coor;
+                    fleche = creer_fleche(Nord, coor);
                     val_case.fleche = fleche;
                     break;
                 default:
                     if (isdigit(type_case)) {
                         c.type = TypeNombre;
                         val_case.nombre = type_case - '0';
-                    } else {
-                        return ErreurTypeCase;
-                    }
+                    } else return ErreurTypeCase;
                     break;
             }
             c.val = val_case;
-            c.coor.x = x;
-            c.coor.y = y;
-            P->cases[x][y] = c;
+            c.coor = creer_coor(x, y);
+            set_case(P, x, y, c);
         }
     }
     
@@ -187,7 +205,7 @@ void afficher_ligne(int dim) {
 }
 
 void afficher_plateau(Plateau P) {
-    UINT dim, nb_salles;
+    int dim, nb_salles;
 
     dim = P.dim;
     nb_salles = P.nb_salles;

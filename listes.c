@@ -46,7 +46,7 @@ bool liste_coor_contient(ListeCoor* l, Coordonnees coor) {
     return false;
 }
 
-UINT taille_liste_coor(ListeCoor* l) {
+int taille_liste_coor(ListeCoor* l) {
     return l->taille;
 }
 

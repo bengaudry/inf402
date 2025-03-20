@@ -12,7 +12,7 @@ typedef struct _s_cell_ {
 typedef struct {
     CellListCoor *first;
     CellListCoor *last;
-    UINT taille;
+    int taille;
 } ListeCoor;
 
 ListeCoor* init_liste_coor();
@@ -21,7 +21,7 @@ void ajouter_element_liste_coor(ListeCoor* l, Coordonnees coor);
 
 bool liste_coor_contient(ListeCoor* l, Coordonnees coor);
 
-UINT taille_liste_coor(ListeCoor* l);
+int taille_liste_coor(ListeCoor* l);
 
 void afficher_liste_coor(ListeCoor* l);
 
