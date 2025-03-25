@@ -103,7 +103,7 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     
     // Lecture du nombre de salles du plateau
     fscanf(f_plateau, "%d", &nb_salles);
-    if (nb_salles < 2 || nb_salles > dim*dim) return NbSallesIncorrect;
+    if (nb_salles < 1 || nb_salles > dim*dim) return NbSallesIncorrect;
     P->nb_salles = 0; // Le nombre de salles est automatiquement incrémenté dans la fonction ajouter_salle_plateau
 
     // Lecture des salles
