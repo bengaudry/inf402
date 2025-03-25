@@ -17,5 +17,13 @@ test_plateau: test_plateau.c plateau.o listes.o utiles.o
 test_listes: test_listes.c plateau.o listes.o utiles.o
 	$(CC) $(CFLAGS) -o $@ $^
 
+disp_all:
+	make test_plateau
+	clear
+	./test_plateau plateaux/2x2.txt
+	./test_plateau plateaux/3x3.txt
+	./test_plateau plateaux/5x5.txt
+	./test_plateau plateaux/6x6.txt
+
 clean:
 	rm -f $(EXECUTABLES) *.o

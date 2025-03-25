@@ -1,5 +1,11 @@
 # Makaro
 
+Sujet projet :
+https://wackb.gricad-pages.univ-grenoble-alpes.fr/inf402/projet.pdf
+
+Exemple makaro:
+https://www.nikoli.co.jp/en/puzzles/makaro/
+
 ## Format plateau
 
 // d la dimension du plateau (dxd)

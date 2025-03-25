@@ -37,8 +37,9 @@ void ajouter_salle_plateau(Plateau *P, ListeCoor *liste_coor, int taille) {
 
 /* Retourne true si les coordonées de la case sont correctes pour ce plateau */
 bool case_dans_plateau(Plateau P, Coordonnees coor) {
-    if (coor.x < 1 || coor.x > P.dim) return false;
-    if (coor.y < 1 || coor.y > P.dim) return false;
+    int dim = get_dim_plateau(P);
+    if (coor.x < 1 || coor.x > dim) return false;
+    if (coor.y < 1 || coor.y > dim) return false;
     return true;
 }
 
