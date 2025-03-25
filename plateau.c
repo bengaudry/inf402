@@ -197,6 +197,26 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     return OK;
 }
 
+/* Renvoie l'index de la salle contenant la case c */
+int index_salle_case (Case c, Plateau P) {
+    CellListCoor *cel;
+
+    for (int idx_salle = 0; idx_salle < P.nb_salles; idx_salle++) {
+        Salle s = get_salle_plateau(P, idx_salle);
+
+        for (int i = 0; i < s.taille; i++) {
+            cel = s.liste_coor->first;
+            while (cel != NULL) {
+                if (coor_egales(cel->coor, c.coor)) return idx_salle;
+                cel = cel->suiv;
+            }
+        }
+    }
+    
+
+    return -1;
+}
+
 void afficher_ligne(int dim) {
     for (int i = 0; i < dim; i++) {
         printf("+---");
@@ -205,12 +225,24 @@ void afficher_ligne(int dim) {
 }
 
 void afficher_plateau(Plateau P) {
-    int dim, nb_salles;
+    int dim, nb_salles, idx;
 
     dim = P.dim;
     nb_salles = P.nb_salles;
 
     printf("Dim = %d; Nb_salles = %d\n", dim, nb_salles);
+
+    char couleurs_shell[7][9] = {
+        "\033[30;41m",
+        "\033[30;42m",
+        "\033[30;43m",
+        "\033[30;44m",
+        "\033[30;45m",
+        "\033[30;46m",
+        "\033[30;47m"
+    };
+
+    char *couleur_defaut_shell = "\033[0m";
 
     for (int y = 1; y <= dim; y++) {
         afficher_ligne(dim);
@@ -219,7 +251,9 @@ void afficher_plateau(Plateau P) {
             Case c = get_case(P, x, y);
             switch (c.type) {
                 case TypeVide:
-                    printf("   |");
+                    idx = index_salle_case(c, P);
+                    //printf("idx: %d\n", idx);
+                    printf("%s   %s|", couleurs_shell[idx], couleur_defaut_shell);
                     break;
                 case TypeFleche:
                     if (c.val.fleche.or == Ouest) {
@@ -233,7 +267,9 @@ void afficher_plateau(Plateau P) {
                     }
                     break;
                 case TypeNombre:
-                    printf(" %d |", c.val.nombre);
+                    idx = index_salle_case(c, P);
+                    //printf("idx: %d\n", idx);
+                    printf("%s %d %s|", couleurs_shell[idx], c.val.nombre, couleur_defaut_shell);
                     break;
             }
         }

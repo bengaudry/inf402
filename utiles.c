@@ -7,6 +7,10 @@ Coordonnees creer_coor(int x, int y) {
     return coor;
 }
 
+bool coor_egales(Coordonnees A, Coordonnees B) {
+    return A.x == B.x && A.y == B.y;
+}
+
 Fleche creer_fleche(Orientation or, Coordonnees case_pointee) {
     Fleche fleche;
     fleche.or = or;
