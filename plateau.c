@@ -253,7 +253,7 @@ void afficher_plateau(Plateau P) {
                 case TypeVide:
                     idx = index_salle_case(c, P);
                     //printf("idx: %d\n", idx);
-                    printf("%s   %s|", couleurs_shell[idx], couleur_defaut_shell);
+                    printf("%s   %s|", couleurs_shell[idx%7], couleur_defaut_shell);
                     break;
                 case TypeFleche:
                     if (c.val.fleche.or == Ouest) {
@@ -269,7 +269,7 @@ void afficher_plateau(Plateau P) {
                 case TypeNombre:
                     idx = index_salle_case(c, P);
                     //printf("idx: %d\n", idx);
-                    printf("%s %d %s|", couleurs_shell[idx], c.val.nombre, couleur_defaut_shell);
+                    printf("%s %d %s|", couleurs_shell[idx%7], c.val.nombre, couleur_defaut_shell);
                     break;
             }
         }
