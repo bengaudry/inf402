@@ -3,6 +3,8 @@ CFLAGS=-Werror
 
 EXECUTABLES = test_plateau test_listes main
 
+all: $(EXECUTABLES)
+
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $<
 

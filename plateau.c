@@ -90,7 +90,7 @@ void erreur_plateau(ErreurPlateau err) {
 ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     FILE *f_plateau;
     int dim, nb_salles;
-    int nb_fleches = 0, total_cases_salles = 0, nb_cases_total = 0;
+    int nb_fleches = 0, nb_cases_initialisees = 0, total_cases_salles = 0, nb_cases_total = 0;
     
     f_plateau = fopen(chemin, "r");
     if (f_plateau == NULL) return ErreurFichier;
@@ -181,6 +181,7 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
                     if (isdigit(type_case)) {
                         c.type = TypeNombre;
                         val_case.nombre = type_case - '0';
+                        nb_cases_initialisees++;
                     } else return ErreurTypeCase;
                     break;
             }
@@ -191,7 +192,8 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     }
     
     if (nb_cases_total != dim*dim) return NbCasesIncorrect;
-    if (nb_cases_total - nb_fleches != total_cases_salles) return SallesMalformées;
+    if (nb_cases_total - nb_fleches != total_cases_salles)
+        return SallesMalformées;
     
     fclose(f_plateau);
     return OK;
@@ -256,20 +258,22 @@ void afficher_plateau(Plateau P) {
                     printf("%s   %s|", couleurs_shell[idx%7], couleur_defaut_shell);
                     break;
                 case TypeFleche:
+                    printf("\033[1m "); // gras
                     if (c.val.fleche.or == Ouest) {
-                        printf(" < |");
+                        printf("←");
                     } else if (c.val.fleche.or == Est) {
-                        printf(" > |");
+                        printf("→");
                     } else if (c.val.fleche.or == Sud) {
-                        printf(" v |");
+                        printf("↓");
                     } else if (c.val.fleche.or == Nord) {
-                        printf(" ^ |");
+                        printf("↑");
                     }
+                    printf("\033[0m |");
                     break;
                 case TypeNombre:
                     idx = index_salle_case(c, P);
                     //printf("idx: %d\n", idx);
-                    printf("%s %d %s|", couleurs_shell[idx%7], c.val.nombre, couleur_defaut_shell);
+                    printf("\033[1m%s %d %s|", couleurs_shell[idx%7], c.val.nombre, couleur_defaut_shell);
                     break;
             }
         }

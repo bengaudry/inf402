@@ -21,11 +21,11 @@ done
 
 echo "\033[33m[+] Résultat des tests:\033[0m"
 echo "\033[30;42m$NB_TESTS_OK tests OK\033[0m"
-echo "\033[30;41m$NB_TESTS_KO tests KO\033[0m"
 
 if [ $NB_TESTS_KO -eq 0 ]
 then
     exit 0
 else
+    echo "\033[30;41m$NB_TESTS_KO tests KO\033[0m"
     exit 1
 fi
