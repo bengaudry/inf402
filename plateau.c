@@ -7,37 +7,81 @@
 #include "plateau.h"
 #include "listes.h"
 
-int get_dim_plateau(Plateau P) {
+char couleurs_shell[7][9] = {
+    "\033[30;41m",
+    "\033[30;42m",
+    "\033[30;43m",
+    "\033[30;44m",
+    "\033[30;45m",
+    "\033[30;46m",
+    "\033[30;47m"
+};
+
+char *couleur_defaut_shell = "\033[0m";
+
+/* Renvoie la dimension du plateau */
+int dimension_plateau(Plateau P) {
     return P.dim;
 }
 
-int get_nb_salles_plateau(Plateau P) {
+/* Renvoie le nombre de salles du plateau */
+int nb_salles_plateau(Plateau P) {
     return P.nb_salles;
 }
 
-Case get_case(Plateau P, int x, int y) {
+/* Renvoie la case du plateau d'indices (x, y) */
+Case case_plateau(Plateau P, int x, int y) {
     return P.grille[x][y];
 }
 
-void set_case(Plateau *P, int x, int y, Case c) {
+/* Change la valeur de la case d'indices (x, y) par c */
+void modifier_case(Plateau *P, int x, int y, Case c) {
     P->grille[x][y] = c;
 }
 
-Salle get_salle_plateau(Plateau P, int i) {
+/* Renvoie la salle d'index i */
+Salle salle_plateau(Plateau P, int i) {
     return P.salles[i];
 }
 
+/* Ajoute une salle au plateau */
 void ajouter_salle_plateau(Plateau *P, ListeCoor *liste_coor, int taille) {
     Salle s;
+    int nb_salles;
+
+    nb_salles = nb_salles_plateau(*P);
     s.liste_coor = liste_coor;
     s.taille = taille;
-    P->salles[P->nb_salles] = s;
+
+    P->salles[nb_salles] = s;
     P->nb_salles++;
+}
+
+/* Renvoie l'index de la salle contenant la case c */
+int index_salle_case (Case c, Plateau P) {
+    CellListCoor *cel;
+    int idx_salle, i, nb_salles;
+
+    nb_salles = nb_salles_plateau(P);
+
+    for (idx_salle = 0; idx_salle < nb_salles; idx_salle++) {
+        Salle s = salle_plateau(P, idx_salle);
+
+        for (i = 0; i < s.taille; i++) {
+            cel = s.liste_coor->first;
+            while (cel != NULL) {
+                if (coor_egales(cel->coor, c.coor)) return idx_salle;
+                cel = cel->suiv;
+            }
+        }
+    }
+
+    return -1; // Case n'est pas dans une salle (flèche)
 }
 
 /* Retourne true si les coordonées de la case sont correctes pour ce plateau */
 bool case_dans_plateau(Plateau P, Coordonnees coor) {
-    int dim = get_dim_plateau(P);
+    int dim = dimension_plateau(P);
     if (coor.x < 1 || coor.x > dim) return false;
     if (coor.y < 1 || coor.y > dim) return false;
     return true;
@@ -92,6 +136,7 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     FILE *f_plateau;
     int dim, nb_salles;
     int nb_fleches = 0, nb_cases_initialisees = 0, total_cases_salles = 0, nb_cases_total = 0;
+    Coordonnees coor;
     
     f_plateau = fopen(chemin, "r");
     if (f_plateau == NULL) return ErreurFichier;
@@ -116,7 +161,6 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
         if (taille_salle < 1 || taille_salle > dim*dim) return TailleSalleIncorrecte;
 
         for (int j = 1; j <= taille_salle; j++) {
-            Coordonnees coor;
             if (!fscanf(f_plateau, "%d %d", &coor.x, &coor.y)) return ErreurCoordonnees;
             if (!case_dans_plateau(*P, coor)) return ErreurCoordonnees;
             if (coor.x < 1 || coor.x > dim || coor.y < 1 || coor.y > dim) return ErreurCoordonnees;
@@ -127,14 +171,14 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
         ajouter_salle_plateau(P, liste_coor_salles, taille_salle);
     }
 
-    // Récupération des cases
+    // Lecture des cases
+    Case c;
+    ValeurCase val_case;
+    Fleche fleche;
+    char type_case;
+    
     for (int y = 1; y <= dim; y++) {
         for (int x = 1; x <= dim; x++) {
-            Case c;
-            ValeurCase val_case;
-            Fleche fleche;
-            Coordonnees coor;
-            char type_case;
 
             do {
                 if (!fscanf(f_plateau, "%c", &type_case)) return ErreurLecture;
@@ -142,9 +186,6 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
 
             nb_cases_total++;
             switch (type_case) {
-                case '.':
-                    c.type = TypeVide;
-                    break;
                 // Gestion des flèches
                 case '<':
                     nb_fleches++;
@@ -178,46 +219,33 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
                     fleche = creer_fleche(Nord, coor);
                     val_case.fleche = fleche;
                     break;
+
+                // Case vide
+                case '.':
+                    c.type = TypeVide;
+                    break;
+
                 default:
-                    if (isdigit(type_case)) {
-                        c.type = TypeNombre;
-                        val_case.nombre = type_case - '0';
-                        nb_cases_initialisees++;
-                    } else return ErreurTypeCase;
+                    // Type de case inconnu
+                    if (!isdigit(type_case)) return ErreurTypeCase;
+                    
+                    // Case initialisée
+                    c.type = TypeNombre;
+                    val_case.nombre = type_case - '0';
+                    nb_cases_initialisees++;
                     break;
             }
             c.val = val_case;
             c.coor = creer_coor(x, y);
-            set_case(P, x, y, c);
+            modifier_case(P, x, y, c);
         }
     }
     
     if (nb_cases_total != dim*dim) return NbCasesIncorrect;
-    if (nb_cases_total - nb_fleches != total_cases_salles)
-        return SallesMalformées;
+    if (nb_cases_total - nb_fleches != total_cases_salles) return SallesMalformées;
     
     fclose(f_plateau);
     return OK;
-}
-
-/* Renvoie l'index de la salle contenant la case c */
-int index_salle_case (Case c, Plateau P) {
-    CellListCoor *cel;
-
-    for (int idx_salle = 0; idx_salle < P.nb_salles; idx_salle++) {
-        Salle s = get_salle_plateau(P, idx_salle);
-
-        for (int i = 0; i < s.taille; i++) {
-            cel = s.liste_coor->first;
-            while (cel != NULL) {
-                if (coor_egales(cel->coor, c.coor)) return idx_salle;
-                cel = cel->suiv;
-            }
-        }
-    }
-    
-
-    return -1;
 }
 
 void afficher_ligne(int dim) {
@@ -229,51 +257,46 @@ void afficher_ligne(int dim) {
 
 void afficher_plateau(Plateau P) {
     int dim, nb_salles, idx;
+    Orientation or_fleche;
 
-    dim = P.dim;
-    nb_salles = P.nb_salles;
+    dim = dimension_plateau(P);
+    nb_salles = nb_salles_plateau(P);
 
     printf("Dim = %d; Nb_salles = %d\n", dim, nb_salles);
-
-    char couleurs_shell[7][9] = {
-        "\033[30;41m",
-        "\033[30;42m",
-        "\033[30;43m",
-        "\033[30;44m",
-        "\033[30;45m",
-        "\033[30;46m",
-        "\033[30;47m"
-    };
-
-    char *couleur_defaut_shell = "\033[0m";
 
     for (int y = 1; y <= dim; y++) {
         afficher_ligne(dim);
         printf("|");
         for (int x = 1; x <= dim; x++) {
-            Case c = get_case(P, x, y);
+            Case c = case_plateau(P, x, y);
             switch (c.type) {
                 case TypeVide:
+                    // Affiche une couleur de fond correspondant à la salle
                     idx = index_salle_case(c, P);
-                    //printf("idx: %d\n", idx);
                     printf("%s   %s|", couleurs_shell[idx%7], couleur_defaut_shell);
                     break;
                 case TypeFleche:
+                    or_fleche = orientation_fleche(c.val.fleche);
                     printf("\033[1m "); // gras
-                    if (c.val.fleche.or == Ouest) {
-                        printf("←");
-                    } else if (c.val.fleche.or == Est) {
-                        printf("→");
-                    } else if (c.val.fleche.or == Sud) {
-                        printf("↓");
-                    } else if (c.val.fleche.or == Nord) {
-                        printf("↑");
+                    switch (or_fleche) {
+                        case Ouest:
+                            printf("←");
+                            break;
+                        case Est:
+                            printf("→");
+                            break;
+                        case Sud:
+                            printf("↓");
+                            break;
+                        case Nord:
+                            printf("↑");
+                            break;
                     }
                     printf("\033[0m |");
                     break;
                 case TypeNombre:
+                    // Affiche une couleur de fond correspondant à la salle
                     idx = index_salle_case(c, P);
-                    //printf("idx: %d\n", idx);
                     printf("\033[1m%s %d %s|", couleurs_shell[idx%7], c.val.nombre, couleur_defaut_shell);
                     break;
             }

@@ -20,8 +20,9 @@ typedef struct {
 
 Coordonnees creer_coor(int x, int y);
 bool coor_egales(Coordonnees A, Coordonnees B);
+
 Fleche creer_fleche(Orientation or, Coordonnees case_pointee);
-Orientation get_orientation_fleche(Fleche f);
-Coordonnees get_case_pointee_fleche(Fleche f);
+Orientation orientation_fleche(Fleche f);
+Coordonnees case_pointee_fleche(Fleche f);
 
 #endif

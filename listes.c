@@ -33,6 +33,7 @@ void ajouter_element_liste_coor(ListeCoor* l, Coordonnees coor) {
     l->taille = l->taille + 1;
 }
 
+/* Renvoie true si l contient les coordonées coor */
 bool liste_coor_contient(ListeCoor* l, Coordonnees coor) {
     CellListCoor* cell = l->first;
 
@@ -46,6 +47,7 @@ bool liste_coor_contient(ListeCoor* l, Coordonnees coor) {
     return false;
 }
 
+/* Renvoie la taille de la liste de coordonées l */
 int taille_liste_coor(ListeCoor* l) {
     return l->taille;
 }
@@ -58,8 +60,11 @@ void afficher_liste_coor(ListeCoor* l) {
         printf("(%d, %d), ", cell->coor.x, cell->coor.y);
         cell = cell->suiv;
     }
+
+    // Affiche la dernière coordonnée
     if (cell != NULL) {
         printf("(%d, %d)", cell->coor.x, cell->coor.y);
     }
+
     printf("]\n");
 }

@@ -43,14 +43,26 @@ typedef struct {
     int dim;
 } Plateau;
 
-int get_dim_plateau(Plateau P);
-int get_nb_salles_plateau(Plateau P);
+/* Renvoie la dimension du plateau */
+int dimension_plateau(Plateau P);
 
-Case get_case(Plateau P, int x, int y);
-void set_case(Plateau *P, int x, int y, Case c);
+/* Renvoie le nombre de salles du plateau */
+int nb_salles_plateau(Plateau P);
 
-Salle get_salle_plateau(Plateau P, int i);
+/* Renvoie la case du plateau d'indices (x, y) */
+Case case_plateau(Plateau P, int x, int y);
+
+/* Change la valeur de la case d'indices (x, y) par c */
+void modifier_case(Plateau *P, int x, int y, Case c);
+
+/* Renvoie la salle d'index i */
+Salle salle_plateau(Plateau P, int i);
+
+/* Ajoute une salle au plateau */
 void ajouter_salle_plateau(Plateau *P, ListeCoor *liste_coor, int taille);
+
+/* Renvoie l'index de la salle contenant la case c */
+int index_salle_case (Case c, Plateau P);
 
 /* Retourne true si les coordonées de la case sont correctes pour ce plateau */
 bool case_dans_plateau(Plateau P, Coordonnees coor);

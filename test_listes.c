@@ -6,26 +6,22 @@ int main(void) {
     Coordonnees c;
     ListeCoor* l = init_liste_coor();
 
+    c = creer_coor(1, 2);
     afficher_liste_coor(l);
     printf("Taille : %d\n", taille_liste_coor(l));
-    printf("Contient (1, 2) : %s\n\n", liste_coor_contient(l, creer_coor(1, 2)) ? "Oui" : "Non");
+    printf("Contient (1, 2) : %s\n\n", liste_coor_contient(l, c) ? "Oui" : "Non");
 
-    c.x= 1;
-    c.y= 2;
     ajouter_element_liste_coor(l, c);
 
     afficher_liste_coor(l);
     printf("Taille : %d\n", taille_liste_coor(l));
-    printf("Contient (1, 2) : %s\n\n", liste_coor_contient(l, creer_coor(1, 2)) ? "Oui" : "Non");
+    printf("Contient (1, 2) : %s\n\n", liste_coor_contient(l, c) ? "Oui" : "Non");
 
-    c.x= 4;
-    c.y= 5;
+    c = creer_coor(4, 5);
     ajouter_element_liste_coor(l, c);
-    c.x= 3;
-    c.y= 2;
+    c = creer_coor(3, 2);
     ajouter_element_liste_coor(l, c);
-    c.x= 1;
-    c.y= 3;
+    c = creer_coor(1, 3);
     ajouter_element_liste_coor(l, c);
     
     afficher_liste_coor(l);

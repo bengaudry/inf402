@@ -1,5 +1,6 @@
 #include "utiles.h"
 
+////// COORDONNÉES //////
 Coordonnees creer_coor(int x, int y) {
     Coordonnees coor;
     coor.x = x;
@@ -11,17 +12,19 @@ bool coor_egales(Coordonnees A, Coordonnees B) {
     return A.x == B.x && A.y == B.y;
 }
 
+
+////// FLÈCHES //////
 Fleche creer_fleche(Orientation or, Coordonnees case_pointee) {
-    Fleche fleche;
-    fleche.or = or;
-    fleche.case_pointee = case_pointee;
-    return fleche;
+    Fleche f;
+    f.or = or;
+    f.case_pointee = case_pointee;
+    return f;
 }
 
-Orientation get_orientation_fleche(Fleche f) {
+Orientation orientation_fleche(Fleche f) {
     return f.or;
 }
 
-Coordonnees get_case_pointee_fleche(Fleche f) {
+Coordonnees case_pointee_fleche(Fleche f) {
     return f.case_pointee;
 }

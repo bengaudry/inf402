@@ -19,8 +19,10 @@ ListeCoor* init_liste_coor();
 
 void ajouter_element_liste_coor(ListeCoor* l, Coordonnees coor);
 
+/* Renvoie true si l contient les coordonées coor */
 bool liste_coor_contient(ListeCoor* l, Coordonnees coor);
 
+/* Renvoie la taille de la liste de coordonées l */
 int taille_liste_coor(ListeCoor* l);
 
 void afficher_liste_coor(ListeCoor* l);
