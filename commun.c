@@ -1,4 +1,4 @@
-#include "utiles.h"
+#include "commun.h"
 
 ////// COORDONNÉES //////
 Coordonnees creer_coor(int x, int y) {

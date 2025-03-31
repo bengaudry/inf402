@@ -3,18 +3,18 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-#include "utiles.h"
+#include "commun.h"
 #include "plateau.h"
 #include "listes.h"
 
 char couleurs_shell[7][9] = {
-    "\033[30;41m",
-    "\033[30;42m",
-    "\033[30;43m",
-    "\033[30;44m",
-    "\033[30;45m",
-    "\033[30;46m",
-    "\033[30;47m"
+    "\033[38;41m",
+    "\033[38;42m",
+    "\033[38;43m",
+    "\033[38;44m",
+    "\033[38;45m",
+    "\033[38;46m",
+    "\033[38;47m"
 };
 
 char *couleur_defaut_shell = "\033[0m";

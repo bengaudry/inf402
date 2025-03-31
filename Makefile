@@ -1,21 +1,25 @@
 CC=clang
 CFLAGS=-Werror
 
-EXECUTABLES = test_plateau test_listes main
+EXECUTABLES = test_plateau test_listes test_logique main
 
 all: $(EXECUTABLES)
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $<
 
-main: main.c plateau.o listes.o utiles.o
+main: main.c plateau.o listes.o commun.o logique.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-test_plateau: test_plateau.c plateau.o listes.o utiles.o
+test_plateau: test_plateau.c plateau.o listes.o commun.o logique.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-test_listes: test_listes.c plateau.o listes.o utiles.o
+test_listes: test_listes.c plateau.o listes.o commun.o logique.o
 	$(CC) $(CFLAGS) -o $@ $^
+
+test_logique: test_logique.c logique.o
+	$(CC) $(CFLAGS) -o $@ $^
+
 
 disp_all:
 	make test_plateau

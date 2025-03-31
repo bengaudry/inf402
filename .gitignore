@@ -1,4 +1,5 @@
 *.o
 test_plateau
 test_listes
+test_logique
 main
