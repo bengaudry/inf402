@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "plateau.h"
+#include "../plateau.h"
 
 int main (int argc, char **argv) {
     Plateau P;

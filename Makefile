@@ -11,13 +11,13 @@ all: $(EXECUTABLES)
 main: main.c plateau.o listes.o commun.o logique.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-test_plateau: test_plateau.c plateau.o listes.o commun.o logique.o
+test_plateau: tests/test_plateau.c plateau.o listes.o commun.o logique.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-test_listes: test_listes.c plateau.o listes.o commun.o logique.o
+test_listes: tests/test_listes.c plateau.o listes.o commun.o logique.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-test_logique: test_logique.c logique.o
+test_logique: tests/test_logique.c logique.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 

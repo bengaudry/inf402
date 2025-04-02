@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "logique.h"
+#include "../logique.h"
 
 void erreur() {
     fprintf(stderr, "\033[41mErreur lors du test\033[0m\n");

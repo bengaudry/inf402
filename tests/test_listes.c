@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "listes.h"
-#include "commun.h"
+#include "../listes.h"
+#include "../commun.h"
 
 int main(void) {
     Coordonnees c;
