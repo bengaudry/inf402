@@ -23,5 +23,7 @@ int main (int argc, char **argv) {
     fnc = modeliser_jeu(P);
     afficher_FNC(*fnc);
 
+    printf("\n\n> Total: %d clauses\n", fnc->taille);
+
     return 0;
 }

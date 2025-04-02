@@ -83,14 +83,12 @@ void modeliser_regle_remplissage_salles(FNC* fnc, Plateau P) {
             while (cel1 != NULL) { // pour toute case c1 dans s
                 ajouter_variable_a_clause(&cl, creer_var_logique(k, cel1->coor.x, cel1->coor.y, false));
 
-                cel2 = S.liste_coor->first;
+                cel2 = cel1->suiv; // on commence à la case qui suit c1 pour éviter les doublons
                 while (cel2 != NULL) { // pour toute case c2 != c1 dans s
-                    if (!coor_egales(cel1->coor, cel2->coor)) {
-                        cl_unicite = initialiser_clause();
-                        ajouter_variable_a_clause(&cl_unicite, creer_var_logique(k, cel1->coor.x, cel1->coor.y, true));
-                        ajouter_variable_a_clause(&cl_unicite, creer_var_logique(k, cel2->coor.x, cel2->coor.y, true));
-                        ajouter_clause_a_fnc(fnc, cl_unicite);
-                    };
+                    cl_unicite = initialiser_clause();
+                    ajouter_variable_a_clause(&cl_unicite, creer_var_logique(k, cel1->coor.x, cel1->coor.y, true));
+                    ajouter_variable_a_clause(&cl_unicite, creer_var_logique(k, cel2->coor.x, cel2->coor.y, true));
+                    ajouter_clause_a_fnc(fnc, cl_unicite);
                     cel2 = cel2->suiv;
                 }
 
