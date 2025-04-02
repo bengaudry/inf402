@@ -1,7 +1,7 @@
 CC=clang
 CFLAGS=-Werror
 
-EXECUTABLES = test_plateau test_listes test_logique main
+EXECUTABLES = test_plateau test_listes test_logique test_modelisation main
 
 all: $(EXECUTABLES)
 
@@ -18,6 +18,9 @@ test_listes: tests/test_listes.c plateau.o listes.o commun.o logique.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 test_logique: tests/test_logique.c logique.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+test_modelisation: tests/test_modelisation.c modelisation.o plateau.o logique.o commun.o listes.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 

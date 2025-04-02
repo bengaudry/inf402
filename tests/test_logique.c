@@ -11,7 +11,7 @@ void erreur() {
 int main() {
     VarLogique v1, v2, v3;
     Clause cl1, cl2, cl3;
-    FNC fnc;
+    FNC *fnc;
 
     fnc = initialiser_FNC();
     cl1 = initialiser_clause();
@@ -19,9 +19,9 @@ int main() {
     cl3 = initialiser_clause();
 
     printf("> FNC Vide: \n");
-    printf("Taille: %d\n", fnc.taille);
-    if (fnc.taille != 0) erreur();
-    afficher_FNC(fnc);
+    printf("Taille: %d\n", fnc->taille);
+    if (fnc->taille != 0) erreur();
+    afficher_FNC(*fnc);
 
     printf("\n> Clause vide:\n");
     printf("Taille: %d\n", cl1.taille);
@@ -46,13 +46,13 @@ int main() {
     ajouter_variable_a_clause(&cl2, creer_var_logique(0, 2, 1, true));
     ajouter_variable_a_clause(&cl3, creer_var_logique(1, 1, 2, true));
 
-    ajouter_clause_a_fnc(&fnc, cl1);
-    ajouter_clause_a_fnc(&fnc, cl2);
-    ajouter_clause_a_fnc(&fnc, cl3);
+    ajouter_clause_a_fnc(fnc, cl1);
+    ajouter_clause_a_fnc(fnc, cl2);
+    ajouter_clause_a_fnc(fnc, cl3);
 
     printf("\n\n> FNC Complète: \n");
-    printf("Taille: %d\n", fnc.taille);
-    afficher_FNC(fnc);
+    printf("Taille: %d\n", fnc->taille);
+    afficher_FNC(*fnc);
 
     return 0;
 }

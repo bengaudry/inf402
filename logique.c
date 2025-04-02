@@ -27,11 +27,12 @@ void ajouter_variable_a_clause(Clause* cl, VarLogique var) {
     cl->taille++;
 }
 
-FNC initialiser_FNC() {
-    FNC fnc;
-    fnc.first = NULL;
-    fnc.last = NULL;
-    fnc.taille = 0;
+FNC* initialiser_FNC() {
+    FNC *fnc;
+    fnc = malloc(sizeof(FNC));
+    fnc->first = NULL;
+    fnc->last = NULL;
+    fnc->taille = 0;
     return fnc;
 }
 
@@ -93,44 +94,4 @@ void afficher_FNC(FNC fnc) {
         afficher_clause(cell->clause);
         printf("\n");
     }
-}
-
-
-/* LISTES FNC */
-
-ListeFNC initialiser_liste_fnc() {
-    ListeFNC L;
-    L.taille = 0;
-    L.first = NULL;
-    L.last = NULL;
-    return L;
-}
-
-void ajouter_element_liste_fnc(ListeFNC* L, FNC* fnc) {
-    CellListeFNC *cell;
-
-    if (L == NULL) {
-        fprintf(stderr, "Erreur: Liste FNC non initialisée\n");
-        exit(1);
-    }
-
-    if (fnc == NULL) {
-        fprintf(stderr, "Erreur: FNC non initialisée\n");
-        exit(1);
-    }
-
-    cell = malloc(sizeof(CellListeFNC));
-    cell->fnc = fnc;
-    cell->suiv = NULL;
-
-    if (L->taille == 0) {
-        L->first = cell;
-        L->last = cell;
-        L->taille = 1;
-        return;
-    }
-
-    L->last->suiv = cell;
-    L->last = cell;
-    L->taille++;
 }

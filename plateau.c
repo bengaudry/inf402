@@ -31,12 +31,12 @@ int nb_salles_plateau(Plateau P) {
 
 /* Renvoie la case du plateau d'indices (x, y) */
 Case case_plateau(Plateau P, int x, int y) {
-    return P.grille[x][y];
+    return P.grille[x-1][y-1];
 }
 
 /* Change la valeur de la case d'indices (x, y) par c */
 void modifier_case(Plateau *P, int x, int y, Case c) {
-    P->grille[x][y] = c;
+    P->grille[x-1][y-1] = c;
 }
 
 /* Renvoie la salle d'index i */
