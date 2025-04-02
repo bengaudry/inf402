@@ -19,7 +19,12 @@ Clause initialiser_clause() {
 }
 
 void ajouter_variable_a_clause(Clause* cl, VarLogique var) {
-    cl->variables[cl->taille++] = var;
+    if (cl->taille >= MAX_VAR) {
+        fprintf(stderr, "Erreur: Clause pleine (MAX_VAR = %d)\n", MAX_VAR);
+        exit(1);
+    }
+    cl->variables[cl->taille] = var;
+    cl->taille++;
 }
 
 FNC initialiser_FNC() {
@@ -40,23 +45,23 @@ void ajouter_clause_a_fnc(FNC* fnc, Clause cl) {
 
     cell = malloc(sizeof(CellFNC));
     cell->clause = cl;
+    cell->suiv = NULL;
 
     if (fnc->taille == 0) {
-        cell->suiv = NULL;
         fnc->first = cell;
         fnc->last = cell;
         fnc->taille = 1;
         return;
     }
 
-    cell->suiv = NULL;
+    fnc->last->suiv = cell;
     fnc->last = cell;
     fnc->taille++;
 }
 
 void afficher_var_logique(VarLogique var) {
     if (var.isneg) printf("¬");
-    printf("(%d, %d, %d)", var.x, var.y, var.val);
+    printf("(%d, %d, %d)", var.val, var.x, var.y);
 }
 
 void afficher_clause(Clause cl) {
@@ -68,19 +73,64 @@ void afficher_clause(Clause cl) {
 
     for (i = 0; i < taille-1; i++) {
         afficher_var_logique(cl.variables[i]);
-        printf("∨");
+        printf(" ∨ ");
     }
 
-    if (i < taille) afficher_var_logique(cl.variables[taille]);
+    if (i < taille) afficher_var_logique(cl.variables[taille-1]);
 }
 
 void afficher_FNC(FNC fnc) {
     CellFNC* cell;
 
     cell = fnc.first;
-    while (cell != NULL) {
+    while (cell != NULL && cell->suiv != NULL) {
         afficher_clause(cell->clause);
-        printf("\n");
+        printf(",\n");
         cell = cell->suiv;
     }
+
+    if (cell != NULL) {
+        afficher_clause(cell->clause);
+        printf("\n");
+    }
+}
+
+
+/* LISTES FNC */
+
+ListeFNC initialiser_liste_fnc() {
+    ListeFNC L;
+    L.taille = 0;
+    L.first = NULL;
+    L.last = NULL;
+    return L;
+}
+
+void ajouter_element_liste_fnc(ListeFNC* L, FNC* fnc) {
+    CellListeFNC *cell;
+
+    if (L == NULL) {
+        fprintf(stderr, "Erreur: Liste FNC non initialisée\n");
+        exit(1);
+    }
+
+    if (fnc == NULL) {
+        fprintf(stderr, "Erreur: FNC non initialisée\n");
+        exit(1);
+    }
+
+    cell = malloc(sizeof(CellListeFNC));
+    cell->fnc = fnc;
+    cell->suiv = NULL;
+
+    if (L->taille == 0) {
+        L->first = cell;
+        L->last = cell;
+        L->taille = 1;
+        return;
+    }
+
+    L->last->suiv = cell;
+    L->last = cell;
+    L->taille++;
 }

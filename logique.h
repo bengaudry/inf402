@@ -32,16 +32,39 @@ typedef struct {
     unsigned int taille;
 } FNC;
 
+/* ====== FONCTIONS ======*/
+
+/* Initialise une variable logique correspodant à X = (x, y, val) ou ¬X si isneg = true */
 VarLogique creer_var_logique(int val, int x, int y, bool isneg);
 
+/* Initialise une clause vide */
 Clause initialiser_clause();
+/* Ajoute une variable à une clause (liste de variables) */
 void ajouter_variable_a_clause(Clause* cl, VarLogique var);
 
+/* Initialise une forme normale conjonctive vide (liste de clauses) */
 FNC initialiser_FNC();
+/* Ajoute une clause a une forme normale conjonctive */
 void ajouter_clause_a_fnc(FNC* fnc, Clause cl);
 
 void afficher_var_logique(VarLogique var);
 void afficher_clause(Clause cl);
 void afficher_FNC(FNC fnc);
+
+
+/* ====== LISTES FNC ====== */
+typedef struct _cell_liste_fnc {
+    FNC *fnc;
+    struct _cell_liste_fnc *suiv;
+} CellListeFNC;
+
+typedef struct {
+    CellListeFNC* first;
+    CellListeFNC* last;
+    unsigned int taille;
+} ListeFNC;
+
+ListeFNC initialiser_liste_fnc();
+void ajouter_element_liste_fnc(ListeFNC* L, FNC* fnc);
 
 #endif
