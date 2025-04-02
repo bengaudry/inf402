@@ -6,6 +6,16 @@ https://wackb.gricad-pages.univ-grenoble-alpes.fr/inf402/projet.pdf
 Exemple makaro:
 https://www.nikoli.co.jp/en/puzzles/makaro/
 
+## Organisation du code
+
+### Tests
+Les fichiers tests se trouve dans le dossier _tests/_ et peuvent être exécutés avec 
+
+```sh
+make test_<nom_du_test>
+./test_<nom_du_test>
+```
+
 ## Format plateau
 
 // d la dimension du plateau (dxd)

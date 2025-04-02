@@ -8,7 +8,7 @@ int main (int argc, char **argv) {
     Plateau P;
     ErreurPlateau err;
 
-    FNC fnc;
+    FNC *fnc;
 
     if (argc != 2) {
         fprintf(stderr, "Utilisation: %s <chemin_fichier_plateau>\n", argv[0]);
@@ -20,8 +20,8 @@ int main (int argc, char **argv) {
     afficher_plateau(P);
 
     printf("\n\n> Modélisation :\n");
-    modeliser_jeu(&fnc, P);
-    afficher_FNC(fnc);
+    fnc = modeliser_jeu(P);
+    afficher_FNC(*fnc);
 
     return 0;
 }
