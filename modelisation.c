@@ -19,7 +19,7 @@ void modeliser_regle_cases_voisines(FNC* fnc, Plateau P) {
         for (y = 1; y <= dim; y++) {
             c = case_plateau(P, x, y);
             switch (c.type) {
-                case TypeFleche: continue; // Pas de règle 1 si c'est une flèche
+                case TypeFleche: break; // Pas de règle 1 si c'est une flèche
                 case TypeVide:
                     // Note: Faire quasi pareil que pour les cases déjà initialisées mais
                     // au lieu d'utiliser la valeur de la case, utiliser toutes les valeurs
@@ -97,8 +97,6 @@ void modeliser_regle_remplissage_salles(FNC* fnc, Plateau P) {
             ajouter_clause_a_fnc(fnc, cl);
         }
     }
-
-    return;
 }
 
 /* Ajoute à la fnc les clauses générées par la règle 3 sur les flèches */
