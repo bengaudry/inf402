@@ -26,26 +26,33 @@ void modeliser_regle_cases_voisines(FNC* fnc, Plateau P) {
                     salle = salle_plateau(P, idx_salle);
                     taille_salle = salle.taille;
 
-                    for (int k = 1; k <= taille_salle; k++) {
-                        cl = initialiser_clause();
-                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
-                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x+1, y, true));
-                        ajouter_clause_a_fnc(fnc, cl);
-
-                        cl = initialiser_clause();
-                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
-                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y+1, true));
-                        ajouter_clause_a_fnc(fnc, cl);
-
-                        cl = initialiser_clause();
-                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
-                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y-1, true));
-                        ajouter_clause_a_fnc(fnc, cl);
-
-                        cl = initialiser_clause();
-                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
-                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x-1, y, true));
-                        ajouter_clause_a_fnc(fnc, cl);
+                    for (int k = 1; k <= taille_salle; k++) { // pour toute valeur qui peut être prise par la case
+                        // Les cases voisines ne doivent pas avoir la même valeur 
+                        // (si elles sont dans le plateau, et que ce ne sont pas des flèches)
+                        if (case_dans_plateau(P, creer_coor(x+1, y)) && case_plateau(P, x+1, y).type != TypeFleche) {
+                            cl = initialiser_clause();
+                            ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
+                            ajouter_variable_a_clause(&cl, creer_var_logique(k, x+1, y, true));
+                            ajouter_clause_a_fnc(fnc, cl);  
+                        }
+                        if (case_dans_plateau(P, creer_coor(x, y+1)) && case_plateau(P, x, y+1).type != TypeFleche) {
+                            cl = initialiser_clause();
+                            ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
+                            ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y+1, true));
+                            ajouter_clause_a_fnc(fnc, cl);  
+                        }
+                        if (case_dans_plateau(P, creer_coor(x, y-1)) && case_plateau(P, x, y-1).type != TypeFleche) {
+                            cl = initialiser_clause();
+                            ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
+                            ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y-1, true));
+                            ajouter_clause_a_fnc(fnc, cl);  
+                        }
+                        if (case_dans_plateau(P, creer_coor(x-1, y)) && case_plateau(P, x-1, y).type != TypeFleche) {
+                            cl = initialiser_clause();
+                            ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
+                            ajouter_variable_a_clause(&cl, creer_var_logique(k, x-1, y, true));
+                            ajouter_clause_a_fnc(fnc, cl);  
+                        }
                     }
 
                     break;

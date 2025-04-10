@@ -303,6 +303,7 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
 }
 
 void afficher_ligne(int dim) {
+    printf("---");
     for (int i = 0; i < dim; i++) {
         printf("+---");
     }
@@ -318,9 +319,19 @@ void afficher_plateau(Plateau P) {
 
     printf("Dim = %d; Nb_salles = %d\n", dim, nb_salles);
 
+    // Affichage des coordonnées x
+    printf("   ");
+    for (int x = 1; x <= dim; x++) {
+        printf("| %d ", x);
+    }
+    printf("|\n");
+
     for (int y = 1; y <= dim; y++) {
+        // Affichage des coordonnées y et du séparateur
         afficher_ligne(dim);
-        printf("|");
+        printf(" %d |", y);
+
+        // Affichage des cases
         for (int x = 1; x <= dim; x++) {
             Case c = case_plateau(P, x, y);
             switch (c.type) {
