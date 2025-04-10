@@ -23,7 +23,15 @@ int main (int argc, char **argv) {
     fnc = modeliser_jeu(P);
     afficher_FNC(*fnc);
 
-    printf("\n\n> Total: %d clauses\n", fnc->taille);
+    printf("\n\n> Total: - %d clauses\n", fnc->taille);
+    printf("         - %d variables\n", fnc->nb_variables);
+
+    printf("\n\n> Transformation en 3-SAT :\n");
+    fnc = sat_vers_3sat(fnc);
+    afficher_FNC(*fnc);
+
+    printf("\n\n> Total: - %d clauses\n", fnc->taille);
+    printf("         - %d variables\n", fnc->nb_variables);
 
     return 0;
 }

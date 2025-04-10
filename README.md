@@ -1,4 +1,4 @@
-# Makaron
+# Makaro
 
 Sujet projet :
 https://wackb.gricad-pages.univ-grenoble-alpes.fr/inf402/projet.pdf

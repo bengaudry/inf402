@@ -30,6 +30,7 @@ typedef struct {
     CellFNC* first;
     CellFNC* last;
     unsigned int taille;
+    unsigned int nb_variables;
 } FNC;
 
 /* ====== FONCTIONS ======*/
@@ -46,6 +47,9 @@ void ajouter_variable_a_clause(Clause* cl, VarLogique var);
 FNC* initialiser_FNC();
 /* Ajoute une clause a une forme normale conjonctive */
 void ajouter_clause_a_fnc(FNC* fnc, Clause cl);
+
+/* Transforme un problème de type SAT en type 3-SAT */
+FNC* sat_vers_3sat(FNC* fnc_sat);
 
 void afficher_var_logique(VarLogique var);
 void afficher_clause(Clause cl);
