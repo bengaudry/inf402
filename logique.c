@@ -102,8 +102,8 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
             cl_3sat = initialiser_clause();
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[0]);
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[1]);
-            ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false)); // (z1)
             nb_var_introduites += 1;
+            ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false)); // (z1)
             ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
 
             for (int k = 2; k <= cl_3sat.taille-2; k++) {
@@ -112,8 +112,8 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
 
                 ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[k]);
 
-                ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false)); //(zk-1)
                 nb_var_introduites += 1;
+                ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false)); //(zk-1)
                 ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
             }
 
@@ -123,8 +123,6 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[cl_sat.taille-1]); // (xn)
             ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
         }
-
-        ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
         cel = cel->suiv;
     }
 
