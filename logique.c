@@ -131,7 +131,8 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
 
             cl_3sat = initialiser_clause();
 
-            ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, true));
+            VarLogique zn = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, true); // (zn-3)
+            ajouter_variable_a_clause(&cl_3sat, zn);
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[cl_sat.taille-2]); // (xn-1)
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[cl_sat.taille-1]); // (xn)
 
