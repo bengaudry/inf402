@@ -17,13 +17,13 @@ int main (int argc, char **argv) {
 
     err = lire_fichier_plateau(argv[1], &P);
     if (err != OK) erreur_plateau(err);
-    //afficher_plateau(P);
+    afficher_plateau(P);
 
-    //printf("\n\n> Modélisation :\n");
+    printf("\n\n> Modélisation :\n");
     fnc = modeliser_jeu(P);
-    //afficher_FNC(*fnc);
+    afficher_FNC(*fnc);
 
-    //printf("\n\n> Total: %d clauses\n", fnc->taille);
+    printf("\n\n> Total: %d clauses\n", fnc->taille);
 
     return 0;
 }
