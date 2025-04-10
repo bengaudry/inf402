@@ -71,7 +71,10 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
 
     fnc_3sat = initialiser_FNC();
 
-    int nb_var_introduites = 0;
+    // permet de compter le nombre de variables introduites pour les clauses de plus de 
+    // 3 variables pour éviter de confondre avec des variables du plateau, ou des variables
+    // déjà introduites lors d'une transformation précédente
+    int nb_var_introduites = 0; 
 
     cel = fnc_sat->first;
     while (cel != NULL) {
@@ -99,30 +102,41 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
 
         if (cl_sat.taille > 3) {
             // (x1+x2+...+xn) <=> (x1+x2+z1)*(¬z1+x3+z2)*...*(¬zn-4+xn-2+zn-3)*(¬zn-3+xn-1+xn)
+            // avec z1, ..., zn-3 des variables introduites
+
+            // Clause 1 : (x1+x2+z1)
             cl_3sat = initialiser_clause();
+
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[0]);
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[1]);
             nb_var_introduites += 1;
-            ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false)); // (z1)
+            VarLogique z1 = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false); // (z1)
+            ajouter_variable_a_clause(&cl_3sat, z1);
+
             ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
 
+            // Clauses du milieu : (¬zk-1+xk+zk)
             for (int k = 2; k <= cl_3sat.taille-2; k++) {
                 cl_3sat = initialiser_clause();
-                ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, true)); //(¬zk-2)
 
-                ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[k]);
-
+                VarLogique zp = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, true); //(¬zk-1)
+                ajouter_variable_a_clause(&cl_3sat, zp); 
+                ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[k]); // xk
                 nb_var_introduites += 1;
-                ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false)); //(zk-1)
+                VarLogique zd = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false); //(zk)
+                ajouter_variable_a_clause(&cl_3sat, zd);
+
                 ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
             }
 
             cl_3sat = initialiser_clause();
+
             ajouter_variable_a_clause(&cl_3sat, creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, true));
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[cl_sat.taille-2]); // (xn-1)
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[cl_sat.taille-1]); // (xn)
-            ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
+
         }
+        ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
         cel = cel->suiv;
     }
 
