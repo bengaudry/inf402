@@ -55,6 +55,9 @@ Case case_plateau(Plateau P, int x, int y);
 /* Change la valeur de la case d'indices (x, y) par c */
 void modifier_case(Plateau *P, int x, int y, Case c);
 
+/* Renvoie une liste de cases voisines d'une flèche, sans la case pointée */
+ListeCoor* cases_voisines_fleches(Plateau P, Coordonnees coor_fleche);
+
 /* Renvoie la salle d'index i */
 Salle salle_plateau(Plateau P, int i);
 

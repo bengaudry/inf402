@@ -134,7 +134,44 @@ void modeliser_regle_remplissage_salles(FNC* fnc, Plateau P) {
 
 /* Ajoute à la fnc les clauses générées par la règle 3 sur les flèches */
 void modeliser_regle_fleches(FNC* fnc, Plateau P) {
-    return;
+    Case c;
+    Coordonnees coor_case_pointee;
+    ListeCoor* cases_voisines;
+    CellListCoor *cel;
+    Salle S;
+    Clause cl;
+    int x, y;
+    unsigned int dim;
+
+    dim = dimension_plateau(P);
+
+    for (x = 1; x <= dim; x++) {
+        for (y = 1; y <= dim; y++) {
+            c = case_plateau(P, x, y);
+            if (c.type != TypeFleche) continue;
+
+            coor_case_pointee = case_pointee_fleche(c.val.fleche);
+            cases_voisines = cases_voisines_fleches(P, creer_coor(x, y));
+
+            // Parcours des cases voisines
+            cel = cases_voisines->first;
+            while (cel != NULL) { // pour chaque case voisine de la flèche (x', y')
+                // Récupération de la salle correspondante à la case parcourue
+                int idx_salle = index_salle_case(case_plateau(P, cel->coor.x, cel->coor.y), P);
+                S = salle_plateau(P, idx_salle);
+
+                for (int k = 2; k <= S.taille; k++) { // pour toute valeur de case entre 2 et |C(S(x, y))|
+                    cl = initialiser_clause();
+                    ajouter_variable_a_clause(&cl, creer_var_logique(k, coor_case_pointee.x, coor_case_pointee.y, true));
+                    for (int i = 1; i <= k-1; i++) {
+                        ajouter_variable_a_clause(&cl, creer_var_logique(i, cel->coor.x, cel->coor.y, false));
+                    }
+                }
+                ajouter_clause_a_fnc(fnc, cl);
+                cel = cel->suiv;
+            }
+        }
+    }
 }
 
 /* Modélise chaque règle du jeu en fnc */

@@ -39,6 +39,53 @@ void modifier_case(Plateau *P, int x, int y, Case c) {
     P->grille[x-1][y-1] = c;
 }
 
+/* Renvoie une liste de cases voisines d'une flèche, sans la case pointée */
+ListeCoor* cases_voisines_fleches(Plateau P, Coordonnees coor_fleche) {
+    ListeCoor* L;
+    Coordonnees c_droite, c_gauche, c_haut, c_bas, coor_case_pointee; // Coordonnées voisines
+    Case c_fleche; // Case contenant la flèche
+    Fleche f;
+
+    // Récupération de la case contenant la flèche
+    c_fleche = case_plateau(P, coor_fleche.x, coor_fleche.y);
+    if (c_fleche.type != TypeFleche) {
+        fprintf(stderr, "Erreur: La case de coordonées (%d, %d) ne correspond pas à une flèche.\n", coor_fleche.x, coor_fleche.y);
+        exit(1);
+    }
+
+    // Récupération des coordonées de la case pointée par la flèche
+    f = c_fleche.val.fleche;
+    coor_case_pointee = case_pointee_fleche(f);
+
+    L = init_liste_coor();
+
+    // Coordonnées des cases voisines de la flèche
+    c_droite = creer_coor(coor_fleche.x+1, coor_fleche.y);
+    c_gauche = creer_coor(coor_fleche.x-1, coor_fleche.y);
+    c_haut = creer_coor(coor_fleche.x, coor_fleche.y+1);
+    c_bas = creer_coor(coor_fleche.x, coor_fleche.y-1);
+
+    // Pour chaque voisine, si la case est dans le plateau et si ce n'est pas 
+    // la case pointée par la flèche, on l'ajoute à la liste
+    if (case_dans_plateau(P, c_droite) && !coor_egales(coor_case_pointee, c_droite)) {
+        ajouter_element_liste_coor(L, c_droite);
+    }
+
+    if (case_dans_plateau(P, c_gauche) && !coor_egales(coor_case_pointee, c_gauche)) {
+        ajouter_element_liste_coor(L, c_gauche);
+    }
+
+    if (case_dans_plateau(P, c_haut) && !coor_egales(coor_case_pointee, c_haut)) {
+        ajouter_element_liste_coor(L, c_haut);
+    }
+
+    if (case_dans_plateau(P, c_bas) && !coor_egales(coor_case_pointee, c_bas)) {
+        ajouter_element_liste_coor(L, c_bas);
+    }
+
+    return L;
+}
+
 /* Renvoie la salle d'index i */
 Salle salle_plateau(Plateau P, int i) {
     return P.salles[i];
