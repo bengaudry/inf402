@@ -4,10 +4,12 @@
 #include "plateau.h"
 #include "commun.h"
 
+
 /* Ajoute à la fnc les clauses générées par la règle 1 sur les cases voisines */
 void modeliser_regle_cases_voisines(FNC* fnc, Plateau P) {
     int x, y;
-    unsigned int dim;
+    int idx_salle;
+    unsigned int dim, taille_salle;
     Case c;
     Salle salle;
     VarLogique var_log;
@@ -21,12 +23,37 @@ void modeliser_regle_cases_voisines(FNC* fnc, Plateau P) {
             switch (c.type) {
                 case TypeFleche: break; // Pas de règle 1 si c'est une flèche
                 case TypeVide:
-                    // Note: Faire quasi pareil que pour les cases déjà initialisées mais
-                    // au lieu d'utiliser la valeur de la case, utiliser toutes les valeurs
-                    // possibles de 1 à la taille de la salle
+                    idx_salle = index_salle_case (c, P);
+                    salle = salle_plateau(P, idx_salle);
+                    taille_salle = salle.taille;
+
+                    for (int k = 1; k <= taille_salle; k++) {
+                        cl = initialiser_clause();
+                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
+                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x+1, y, true));
+                        ajouter_clause_a_fnc(fnc, cl);
+
+                        cl = initialiser_clause();
+                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
+                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y+1, true));
+                        ajouter_clause_a_fnc(fnc, cl);
+
+                        cl = initialiser_clause();
+                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
+                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y-1, true));
+                        ajouter_clause_a_fnc(fnc, cl);
+
+                        cl = initialiser_clause();
+                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x, y, true));
+                        ajouter_variable_a_clause(&cl, creer_var_logique(k, x-1, y, true));
+                        ajouter_clause_a_fnc(fnc, cl);
+                    }
+
                     break;
                 case TypeNombre:
                     // Case déjà initialisée
+                    // On connaît déjà la valeur de cette case donc on a une variable X(k, x, y) qui est vraie,
+                    // Il faut juste vérifier que les cases voisines n'aient pas la même valeur
                     cl = initialiser_clause();
                     int val_case = c.val.nombre;
 
@@ -75,26 +102,32 @@ void modeliser_regle_remplissage_salles(FNC* fnc, Plateau P) {
         Salle S = salle_plateau(P, idx_salle);
         taille_salle = S.taille;
 
-        int k;
-        for (k = 1; k <= taille_salle; k++) { // pour tout entier entre 1 et |C(s)|
-            cl = initialiser_clause();
-            
-            cel1 = S.liste_coor->first;
-            while (cel1 != NULL) { // pour toute case c1 dans s
-                ajouter_variable_a_clause(&cl, creer_var_logique(k, cel1->coor.x, cel1->coor.y, false));
 
-                cel2 = cel1->suiv; // on commence à la case qui suit c1 pour éviter les doublons
-                while (cel2 != NULL) { // pour toute case c2 != c1 dans s
+        // Clause d'existence (H2)
+        cel1 = S.liste_coor->first;
+        while (cel1 != NULL) { // pour toute case (x, y) dans s
+            cl = initialiser_clause();
+            for (int k = 1; k <= taille_salle; k++) { // pour tout entier entre 1 et |C(s)|
+                ajouter_variable_a_clause(&cl, creer_var_logique(k, cel1->coor.x, cel1->coor.y, false));
+            }
+            ajouter_clause_a_fnc(fnc, cl);
+            cel1 = cel1->suiv;
+        }
+
+        // Clause d'unicité (H'2)
+        cel1 = S.liste_coor->first;
+        while (cel1 != NULL) { // pour toute case c1 dans s
+            cel2 = cel1->suiv; // on commence à la case qui suit c1 pour éviter les doublons
+            while (cel2 != NULL) { // pour toute case c2 != c1 dans s
+                for (int k = 1; k <= taille_salle; k++) { // pour tout entier entre 1 et |C(s)|
                     cl_unicite = initialiser_clause();
                     ajouter_variable_a_clause(&cl_unicite, creer_var_logique(k, cel1->coor.x, cel1->coor.y, true));
                     ajouter_variable_a_clause(&cl_unicite, creer_var_logique(k, cel2->coor.x, cel2->coor.y, true));
                     ajouter_clause_a_fnc(fnc, cl_unicite);
-                    cel2 = cel2->suiv;
                 }
-
-                cel1 = cel1->suiv;
+                cel2 = cel2->suiv;
             }
-            ajouter_clause_a_fnc(fnc, cl);
+            cel1 = cel1->suiv;
         }
     }
 }
