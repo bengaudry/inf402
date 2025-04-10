@@ -55,7 +55,7 @@ ListeCoor* cases_voisines_fleches(Plateau P, Coordonnees coor_fleche) {
 
     // Récupération des coordonées de la case pointée par la flèche
     f = c_fleche.val.fleche;
-    coor_case_pointee = case_pointee_fleche(f);
+    coor_case_pointee = coor_case_pointee_fleche(f);
 
     L = init_liste_coor();
 
@@ -124,6 +124,13 @@ int index_salle_case (Case c, Plateau P) {
     }
 
     return -1; // Case n'est pas dans une salle (flèche)
+}
+
+/* Renvoie la salle contenant la case de coordonées (x, y) */
+Salle salle_contenant_case(Plateau P, int x, int y) {
+    Case c = case_plateau(P, x, y);
+    int idx = index_salle_case(c, P);
+    return salle_plateau(P, idx);
 }
 
 /* Retourne true si les coordonées de la case sont correctes pour ce plateau */

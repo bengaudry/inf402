@@ -25,6 +25,6 @@ Orientation orientation_fleche(Fleche f) {
     return f.or;
 }
 
-Coordonnees case_pointee_fleche(Fleche f) {
+Coordonnees coor_case_pointee_fleche(Fleche f) {
     return f.case_pointee;
 }

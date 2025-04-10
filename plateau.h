@@ -65,7 +65,10 @@ Salle salle_plateau(Plateau P, int i);
 void ajouter_salle_plateau(Plateau *P, ListeCoor *liste_coor, int taille);
 
 /* Renvoie l'index de la salle contenant la case c */
-int index_salle_case (Case c, Plateau P);
+int index_salle_case(Case c, Plateau P);
+
+/* Renvoie la salle contenant la case de coordonées (x, y) */
+Salle salle_contenant_case(Plateau P, int x, int y);
 
 /* Retourne true si les coordonées de la case sont correctes pour ce plateau */
 bool case_dans_plateau(Plateau P, Coordonnees coor);

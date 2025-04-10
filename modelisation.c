@@ -4,7 +4,6 @@
 #include "plateau.h"
 #include "commun.h"
 
-
 /* Ajoute à la fnc les clauses générées par la règle 1 sur les cases voisines */
 void modeliser_regle_cases_voisines(FNC* fnc, Plateau P) {
     int x, y;
@@ -102,7 +101,6 @@ void modeliser_regle_remplissage_salles(FNC* fnc, Plateau P) {
         Salle S = salle_plateau(P, idx_salle);
         taille_salle = S.taille;
 
-
         // Clause d'existence (H2)
         cel1 = S.liste_coor->first;
         while (cel1 != NULL) { // pour toute case (x, y) dans s
@@ -150,15 +148,14 @@ void modeliser_regle_fleches(FNC* fnc, Plateau P) {
             c = case_plateau(P, x, y);
             if (c.type != TypeFleche) continue;
 
-            coor_case_pointee = case_pointee_fleche(c.val.fleche);
+            coor_case_pointee = coor_case_pointee_fleche(c.val.fleche);
             cases_voisines = cases_voisines_fleches(P, creer_coor(x, y));
 
             // Parcours des cases voisines
             cel = cases_voisines->first;
             while (cel != NULL) { // pour chaque case voisine de la flèche (x', y')
                 // Récupération de la salle correspondante à la case parcourue
-                int idx_salle = index_salle_case(case_plateau(P, cel->coor.x, cel->coor.y), P);
-                S = salle_plateau(P, idx_salle);
+                S = salle_contenant_case(P, cel->coor.x, cel->coor.y);
 
                 for (int k = 2; k <= S.taille; k++) { // pour toute valeur de case entre 2 et |C(S(x, y))|
                     cl = initialiser_clause();
