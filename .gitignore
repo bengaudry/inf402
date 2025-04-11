@@ -3,4 +3,7 @@ test_plateau
 test_listes
 test_logique
 test_modelisation
+test_export_dimacs
+test_encodage_dimacs
+*.dimacs
 main

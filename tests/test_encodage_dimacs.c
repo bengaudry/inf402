@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "dimacs.h"
+#include "../dimacs.h"
 
 int main(int argc, char **argv) {
 
@@ -16,17 +16,16 @@ int main(int argc, char **argv) {
     printf("\n");
 
     //calcul de l'id unique correspondant à la variable
+
     int id = encodage_id(dim, maxVal, var);
     printf("ID calculé: %d\n", id);
 
     //calcul de la variable à partir de l'id
     decodage_id(dim, maxVal, id, &var.x, &var.y, &var.val);
-    printf("Varibale logique depuis l'id: ");
+    printf("Variable logique depuis l'id: ");
     afficher_var_logique(var);
     printf("\n");
-
     
-
     return 0;
 }
 

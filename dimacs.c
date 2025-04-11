@@ -25,7 +25,7 @@ void decodage_id(int dim, int maxVal, int id, int* x, int* y, int* val) {
 
 void sortie_dimacs(FNC fnc, int dim, int maxVal, char *fichier_sortie){
     FILE *f;
-    f = fopen(fichier_sortie, "r");
+    f = fopen(fichier_sortie, "w");
     CellFNC *cel = fnc.first;
     VarLogique var;
     int nb_var = nombre_var(fnc);

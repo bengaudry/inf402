@@ -29,6 +29,11 @@ int nb_salles_plateau(Plateau P) {
     return P.nb_salles;
 }
 
+/* Renvoie le plus grand nombre possible du plateau */
+int val_max_plateau(Plateau P) {
+    return P.val_max;
+}
+
 /* Renvoie la case du plateau d'indices (x, y) */
 Case case_plateau(Plateau P, int x, int y) {
     return P.grille[x-1][y-1];
@@ -206,6 +211,8 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     if (nb_salles < 1 || nb_salles > dim*dim) return NbSallesIncorrect;
     P->nb_salles = 0; // Le nombre de salles est automatiquement incrémenté dans la fonction ajouter_salle_plateau
 
+    P->val_max = 0;
+
     // Lecture des salles
     for (int i = 1; i <= nb_salles; i++) {
         int taille_salle;
@@ -213,6 +220,8 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
 
         if (!fscanf(f_plateau, "%d", &taille_salle)) return SallesManquantes;
         if (taille_salle < 1 || taille_salle > dim*dim) return TailleSalleIncorrecte;
+
+        if (taille_salle > P->val_max) P->val_max = taille_salle; // Remplace la val max prise par une case
 
         for (int j = 1; j <= taille_salle; j++) {
             if (!fscanf(f_plateau, "%d %d", &coor.x, &coor.y)) return ErreurCoordonnees;

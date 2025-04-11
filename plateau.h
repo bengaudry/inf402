@@ -41,6 +41,7 @@ typedef struct {
     Salle salles[DIM_MAX];
     int nb_salles;
     int dim;
+    int val_max; // La plus grande valeur sur le plateau (taille de la plus grande salle)
 } Plateau;
 
 /* Renvoie la dimension du plateau */
@@ -48,6 +49,9 @@ int dimension_plateau(Plateau P);
 
 /* Renvoie le nombre de salles du plateau */
 int nb_salles_plateau(Plateau P);
+
+/* Renvoie le plus grand nombre possible du plateau */
+int val_max_plateau(Plateau P);
 
 /* Renvoie la case du plateau d'indices (x, y) */
 Case case_plateau(Plateau P, int x, int y);
