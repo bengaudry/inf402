@@ -181,3 +181,14 @@ void afficher_FNC(FNC fnc) {
         printf("\n");
     }
 }
+
+int nombre_var(FNC fnc) {
+    CellFNC *cel = fnc.first;
+    int nb = 0;
+
+    while (cel != NULL){
+        nb += cel->clause.taille;
+        cel = cel->suiv;
+    }
+    return nb;
+}

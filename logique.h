@@ -55,4 +55,7 @@ void afficher_var_logique(VarLogique var);
 void afficher_clause(Clause cl);
 void afficher_FNC(FNC fnc);
 
+/*retourne le nombre total de variables de la fnc*/
+int nombre_var(FNC fnc);
+
 #endif
