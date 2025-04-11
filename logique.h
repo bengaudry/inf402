@@ -30,13 +30,17 @@ typedef struct {
     CellFNC* first;
     CellFNC* last;
     unsigned int taille;
-    unsigned int nb_variables;
+    unsigned int nb_variables_total;  // total de variables ajoutées
+    unsigned int nb_variables_differentes; // total de variables différentes les unes des autres (libres)
 } FNC;
 
 /* ====== FONCTIONS ======*/
 
 /* Initialise une variable logique correspodant à X = (x, y, val) ou ¬X si isneg = true */
 VarLogique creer_var_logique(int val, int x, int y, bool isneg);
+
+/* Renvoie true si deux variables logiques sont égales */
+bool var_logiques_egales(VarLogique A, VarLogique B);
 
 /* Initialise une clause vide */
 Clause initialiser_clause();

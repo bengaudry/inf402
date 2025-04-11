@@ -3,8 +3,8 @@
 
 #include "dimacs.h"
 
-int encodage_id(int dim, int maxVal, VarLogique var) {
-    int id = ((var.x - 1)*dim + (var.y - 1))*maxVal + var.val;
+int encodage_id(int dim, VarLogique var) {
+    int id = (var.val - 1)*dim*dim + (var.x - 1)*dim + var.y;
 
     //si la variable est une négation
     if (var.isneg == true) {
@@ -14,13 +14,11 @@ int encodage_id(int dim, int maxVal, VarLogique var) {
     return id;
 }
 
-void decodage_id(int dim, int maxVal, int id, int* x, int* y, int* val) {
+void decodage_id(int dim, int id, int* x, int* y, int* val) {
     if (id < 0) id = -id;
-    int case_id = (id - 1) / maxVal; // index de la case dans la grille linéaire
-    *val = ((id - 1) % maxVal) + 1;  // position dans le bloc, donc la valeur
-
-    *x = (case_id / dim) + 1;         // ligne (on remet de 0 à 1-indexé)
-    *y = (case_id % dim) + 1;         // colonne (idem)
+    *x = ((id-1)%(dim * dim)/dim) + 1;
+    *y = ((id-1)%dim) + 1;
+    *val = ((id-1)/(dim*dim)) + 1;
 }
 
 void sortie_dimacs(FNC fnc, int dim, int maxVal, char *fichier_sortie){
@@ -28,18 +26,28 @@ void sortie_dimacs(FNC fnc, int dim, int maxVal, char *fichier_sortie){
     f = fopen(fichier_sortie, "w");
     CellFNC *cel = fnc.first;
     VarLogique var;
-    int nb_var = nombre_var(fnc);
+    int nb_var = dim*dim*maxVal;
     int id;
 
     //en-tete du fichier
     fprintf(f, "p cnf %d %d\n", nb_var, fnc.taille);
+
+    int decalage_var_libres = 0;
 
     //corps du fichier
     while (cel != NULL) {
         //ecriture d'une clause
         for (int i=0; i<cel->clause.taille; i++){
             var = cel->clause.variables[i];
-            id = encodage_id(dim, maxVal, var);
+
+            if (var_logiques_egales(var, creer_var_logique(-1, -1, -1, true))) {
+                id = -nb_var-decalage_var_libres;
+                decalage_var_libres++;
+            } else if (var_logiques_egales(var, creer_var_logique(-1, -1, -1, false))) {
+                id = nb_var+decalage_var_libres;
+            } else {
+                id = encodage_id(dim, var);
+            }
 
             //ecriture de l'id
             fprintf(f, "%d ", id);

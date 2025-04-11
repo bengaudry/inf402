@@ -12,6 +12,17 @@ VarLogique creer_var_logique(int val, int x, int y, bool isneg) {
     return var;
 }
 
+/* Retourne vrai si deux variables logiques sont égales, peu-importe si c'est une négation ou non
+ * exemple : var_logiques_equivalentes(X(1, 2, 3), !X(1, 2, 3)) -> vrai */
+bool var_logiques_equivalentes(VarLogique A, VarLogique B) {
+    return (A.val == B.val && A.x == B.x && A.y == B.y);
+}
+
+/* Retourne vrai si deux variables logiques sont égales */
+bool var_logiques_egales(VarLogique A, VarLogique B) {
+    return (A.val == B.val && A.x == B.x && A.y == B.y && A.isneg == B.isneg);
+}
+
 Clause initialiser_clause() {
     Clause cl;
     cl.taille = 0;
@@ -33,8 +44,26 @@ FNC* initialiser_FNC() {
     fnc->first = NULL;
     fnc->last = NULL;
     fnc->taille = 0;
-    fnc->nb_variables = 0;
+    fnc->nb_variables_total = 0;
+    fnc->nb_variables_differentes = 0;
     return fnc;
+}
+
+bool variable_est_dans_fnc(FNC fnc, VarLogique var) {
+    CellFNC *cell;
+    Clause cl;
+
+    cell = fnc.first;
+    while (cell != NULL) {
+        cl = cell->clause;
+
+        for (int i = 0; i < cl.taille; i++) {
+            if (var_logiques_equivalentes(var, cl.variables[i])) return true;
+        }
+
+        cell = cell->suiv;
+    }
+    return false;
 }
 
 void ajouter_clause_a_fnc(FNC* fnc, Clause cl) {
@@ -48,8 +77,13 @@ void ajouter_clause_a_fnc(FNC* fnc, Clause cl) {
     cell = malloc(sizeof(CellFNC));
     cell->clause = cl;
     cell->suiv = NULL;
+
+    for (int i = 0; i < cl.taille; i++) { // compter le nombre de variables libres
+        if (!variable_est_dans_fnc(*fnc, cl.variables[i]))
+            fnc->nb_variables_differentes++;
+    }
     
-    fnc->nb_variables += cl.taille;
+    fnc->nb_variables_total += cl.taille;
 
     if (fnc->taille == 0) {
         fnc->first = cell;
@@ -110,7 +144,7 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[0]);
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[1]);
             nb_var_introduites += 1;
-            VarLogique z1 = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false); // (z1)
+            VarLogique z1 = creer_var_logique(-1, -1, -1, false); // (z1)
             ajouter_variable_a_clause(&cl_3sat, z1);
 
             ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
@@ -119,11 +153,11 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
             for (int k = 2; k <= cl_3sat.taille-2; k++) {
                 cl_3sat = initialiser_clause();
 
-                VarLogique zp = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, true); //(¬zk-1)
+                VarLogique zp = creer_var_logique(-1, -1, -1, true); //(¬zk-1)
                 ajouter_variable_a_clause(&cl_3sat, zp); 
                 ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[k]); // xk
                 nb_var_introduites += 1;
-                VarLogique zd = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, false); //(zk)
+                VarLogique zd = creer_var_logique(-1, -1, -1, false); //(zk)
                 ajouter_variable_a_clause(&cl_3sat, zd);
 
                 ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
@@ -131,7 +165,7 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
 
             cl_3sat = initialiser_clause();
 
-            VarLogique zn = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, true); // (zn-3)
+            VarLogique zn = creer_var_logique(-1, -1, -1, true); // (zn-3)
             ajouter_variable_a_clause(&cl_3sat, zn);
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[cl_sat.taille-2]); // (xn-1)
             ajouter_variable_a_clause(&cl_3sat, cl_sat.variables[cl_sat.taille-1]); // (xn)
