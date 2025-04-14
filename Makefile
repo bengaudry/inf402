@@ -11,10 +11,10 @@ all: $(EXECUTABLES)
 
 # ====== MINISAT ===== #
 minisat.o: minisat_src/minisat.c minisat_src/minisat.h
-	$(CC) $(CFLAGS) -c $<
+	$(CC) -c $<
 
 solver.o: minisat_src/solver.c minisat_src/solver.h
-	$(CC) $(CFLAGS) -c $<
+	$(CC) -c $<
 # ====== MINISAT ===== #
 
 
@@ -41,15 +41,6 @@ test_export_dimacs: tests/test_export_dimacs.c dimacs.o modelisation.o plateau.o
 
 test_sat_solver: tests/test_sat_solver.c sat_solver.o
 	$(CC) $(CFLAGS) -o $@ $^
-
-
-disp_all:
-	make test_plateau
-	clear
-	./test_plateau plateaux/2x2.txt
-	./test_plateau plateaux/3x3.txt
-	./test_plateau plateaux/5x5.txt
-	./test_plateau plateaux/6x6.txt
-
+	
 clean:
-	rm -f $(EXECUTABLES) *.o
+	rm -rf $(EXECUTABLES) *.o

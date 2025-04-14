@@ -7,18 +7,6 @@
 #include "plateau.h"
 #include "listes.h"
 
-char couleurs_shell[7][9] = {
-    "\033[38;41m",
-    "\033[38;42m",
-    "\033[38;43m",
-    "\033[38;44m",
-    "\033[38;45m",
-    "\033[38;46m",
-    "\033[38;47m"
-};
-
-char *couleur_defaut_shell = "\033[0m";
-
 /* Renvoie la dimension du plateau */
 int dimension_plateau(Plateau P) {
     return P.dim;
@@ -72,21 +60,14 @@ ListeCoor* cases_voisines_fleches(Plateau P, Coordonnees coor_fleche) {
 
     // Pour chaque voisine, si la case est dans le plateau et si ce n'est pas 
     // la case pointée par la flèche, on l'ajoute à la liste
-    if (case_dans_plateau(P, c_droite) && !coor_egales(coor_case_pointee, c_droite)) {
+    if (case_dans_plateau(P, c_droite) && !coor_egales(coor_case_pointee, c_droite))
         ajouter_element_liste_coor(L, c_droite);
-    }
-
-    if (case_dans_plateau(P, c_gauche) && !coor_egales(coor_case_pointee, c_gauche)) {
+    if (case_dans_plateau(P, c_gauche) && !coor_egales(coor_case_pointee, c_gauche))
         ajouter_element_liste_coor(L, c_gauche);
-    }
-
-    if (case_dans_plateau(P, c_haut) && !coor_egales(coor_case_pointee, c_haut)) {
+    if (case_dans_plateau(P, c_haut) && !coor_egales(coor_case_pointee, c_haut))
         ajouter_element_liste_coor(L, c_haut);
-    }
-
-    if (case_dans_plateau(P, c_bas) && !coor_egales(coor_case_pointee, c_bas)) {
+    if (case_dans_plateau(P, c_bas) && !coor_egales(coor_case_pointee, c_bas))
         ajouter_element_liste_coor(L, c_bas);
-    }
 
     return L;
 }
@@ -111,13 +92,14 @@ void ajouter_salle_plateau(Plateau *P, ListeCoor *liste_coor, int taille) {
 
 /* Renvoie l'index de la salle contenant la case c */
 int index_salle_case (Case c, Plateau P) {
+    Salle s;
     CellListCoor *cel;
     int idx_salle, i, nb_salles;
 
     nb_salles = nb_salles_plateau(P);
 
     for (idx_salle = 0; idx_salle < nb_salles; idx_salle++) {
-        Salle s = salle_plateau(P, idx_salle);
+        s = salle_plateau(P, idx_salle);
 
         for (i = 0; i < s.taille; i++) {
             cel = s.liste_coor->first;
@@ -148,9 +130,9 @@ bool case_dans_plateau(Plateau P, Coordonnees coor) {
 
 /* Affiche une erreur de plateau et termine le programme */
 void erreur_plateau(ErreurPlateau err) {
-    if (err == OK) return;
-
     switch (err) {
+        case OK:
+            return;
         case ErreurFichier:
             fprintf(stderr, "Erreur: Impossible d'ouvrir le fichier\n");
             break;
@@ -184,8 +166,6 @@ void erreur_plateau(ErreurPlateau err) {
         case ErreurCoordonnees:
             fprintf(stderr, "Erreur: Coordonnées incorrectes\n");
             break;
-        default:
-            break;
     }
     exit(1);
 }
@@ -193,13 +173,16 @@ void erreur_plateau(ErreurPlateau err) {
 /* Lit un fichier plateau et crée un plateau avec les données lues */
 ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     FILE *f_plateau;
+    Coordonnees coor;
+    Case c;
+    ValeurCase val_case;
+    Fleche fleche;
+    char type_case;
     int dim, nb_salles;
     int nb_fleches = 0, nb_cases_initialisees = 0, total_cases_salles = 0, nb_cases_total = 0;
-    Coordonnees coor;
     
     f_plateau = fopen(chemin, "r");
     if (f_plateau == NULL) return ErreurFichier;
-
 
     // Lecture de la dimension du plateau
     fscanf(f_plateau, "%d", &dim);
@@ -210,7 +193,6 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     fscanf(f_plateau, "%d", &nb_salles);
     if (nb_salles < 1 || nb_salles > dim*dim) return NbSallesIncorrect;
     P->nb_salles = 0; // Le nombre de salles est automatiquement incrémenté dans la fonction ajouter_salle_plateau
-
     P->val_max = 0;
 
     // Lecture des salles
@@ -235,14 +217,8 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     }
 
     // Lecture des cases
-    Case c;
-    ValeurCase val_case;
-    Fleche fleche;
-    char type_case;
-    
     for (int y = 1; y <= dim; y++) {
         for (int x = 1; x <= dim; x++) {
-
             do {
                 if (!fscanf(f_plateau, "%c", &type_case)) return ErreurLecture;
             } while (type_case == '\n' || type_case == ' ');
@@ -282,12 +258,10 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
                     fleche = creer_fleche(Nord, coor);
                     val_case.fleche = fleche;
                     break;
-
                 // Case vide
                 case '.':
                     c.type = TypeVide;
                     break;
-
                 default:
                     // Type de case inconnu
                     if (!isdigit(type_case)) return ErreurTypeCase;
@@ -312,12 +286,22 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
 }
 
 void afficher_ligne(int dim) {
-    printf("---");
-    for (int i = 0; i < dim; i++) {
-        printf("+---");
-    }
+    printf("   ");
+    for (int i = 0; i < dim; i++) printf("+---");
     printf("+\n");
 }
+
+static char couleurs_shell[7][9] = {
+    "\033[38;41m",
+    "\033[38;42m",
+    "\033[38;43m",
+    "\033[38;44m",
+    "\033[38;45m",
+    "\033[30;46m",
+    "\033[30;47m"
+};
+
+static char *couleur_defaut_shell = "\033[0m";
 
 void afficher_plateau(Plateau P) {
     int dim, nb_salles, idx;
@@ -326,14 +310,12 @@ void afficher_plateau(Plateau P) {
     dim = dimension_plateau(P);
     nb_salles = nb_salles_plateau(P);
 
-    printf("Dim = %d; Nb_salles = %d\n", dim, nb_salles);
-
     // Affichage des coordonnées x
-    printf("   ");
+    printf("y\\x");
     for (int x = 1; x <= dim; x++) {
-        printf("| %d ", x);
+        printf("  %d ", x);
     }
-    printf("|\n");
+    printf(" \n");
 
     for (int y = 1; y <= dim; y++) {
         // Affichage des coordonnées y et du séparateur
@@ -353,20 +335,12 @@ void afficher_plateau(Plateau P) {
                     or_fleche = orientation_fleche(c.val.fleche);
                     printf("\033[1m "); // gras
                     switch (or_fleche) {
-                        case Ouest:
-                            printf("←");
-                            break;
-                        case Est:
-                            printf("→");
-                            break;
-                        case Sud:
-                            printf("↓");
-                            break;
-                        case Nord:
-                            printf("↑");
-                            break;
+                        case Ouest: printf("←"); break;
+                        case Est: printf("→"); break;
+                        case Sud: printf("↓"); break;
+                        case Nord: printf("↑"); break;
                     }
-                    printf("\033[0m |");
+                    printf("\033[0m |"); // reset
                     break;
                 case TypeNombre:
                     // Affiche une couleur de fond correspondant à la salle
