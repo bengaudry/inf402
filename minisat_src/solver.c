@@ -19,11 +19,11 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 **************************************************************************************************/
 // Modified to compile with MS Visual Studio 6.0 by Alan Mishchenko
 
+#include "solver.h"
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
 
-#include "solver.h"
 
 //=================================================================================================
 // Debug:

@@ -169,7 +169,7 @@ void erreur_plateau(ErreurPlateau err) {
         case FlechePointeDehors:
             fprintf(stderr, "Erreur: Fleche pointe en dehors du plateau\n");
             break;
-        case SallesMalformées:
+        case SallesMalformees:
             fprintf(stderr, "Erreur: Salles malformées\n");
             break;
         case NbCasesIncorrect:
@@ -305,7 +305,7 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
     }
     
     if (nb_cases_total != dim*dim) return NbCasesIncorrect;
-    if (nb_cases_total - nb_fleches != total_cases_salles) return SallesMalformées;
+    if (nb_cases_total - nb_fleches != total_cases_salles) return SallesMalformees;
     
     fclose(f_plateau);
     return OK;

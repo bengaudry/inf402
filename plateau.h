@@ -15,7 +15,7 @@ typedef enum {
     FlechePointeDehors,
     SallesManquantes,
     NbCasesIncorrect,
-    SallesMalformées,
+    SallesMalformees,
     ErreurTypeCase,
     ErreurCoordonnees,
 } ErreurPlateau;
