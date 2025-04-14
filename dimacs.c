@@ -4,7 +4,7 @@
 #include "dimacs.h"
 
 int encodage_id(int dim, int maxVal, VarLogique var) {
-    int id = (var.val - 1)*dim*dim + (var.x - 1)*dim + var.y;
+    int id = ((var.x - 1)*dim + (var.y - 1))*maxVal + var.val;
 
     //si la variable est une négation
     if (var.isneg == true) {
@@ -16,10 +16,11 @@ int encodage_id(int dim, int maxVal, VarLogique var) {
 
 void decodage_id(int dim, int maxVal, int id, int* x, int* y, int* val) {
     if (id < 0) id = -id;
-    id -= 1;
-    *x = (id / (dim * dim)) + 1;
-    *y = ((id % (dim * dim)) / dim) + 1;
-    *val = (id % dim) + 1;
+    int case_id = (id - 1) / maxVal; // index de la case dans la grille linéaire
+    *val = ((id - 1) % maxVal) + 1;  // position dans le bloc, donc la valeur
+
+    *x = (case_id / dim) + 1;         // ligne (on remet de 0 à 1-indexé)
+    *y = (case_id % dim) + 1;         // colonne (idem)
 }
 
 void sortie_dimacs(FNC fnc, int dim, int maxVal, char *fichier_sortie){
