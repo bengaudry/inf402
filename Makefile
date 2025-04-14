@@ -1,7 +1,7 @@
 CC=clang
 CFLAGS=-Werror
 
-EXECUTABLES = test_plateau test_listes test_logique test_modelisation test_export_dimacs test_encodage_dimacs main
+EXECUTABLES = test_plateau test_listes test_logique test_modelisation test_export_dimacs test_encodage_dimacs test_sat_solver main
 
 all: $(EXECUTABLES)
 
