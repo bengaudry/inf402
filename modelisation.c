@@ -163,6 +163,11 @@ void modeliser_regle_fleches(FNC* fnc, Plateau P) {
             while (cel != NULL) { // pour chaque case voisine de la flèche (x', y')
                 // Récupération de la salle correspondante à la case parcourue
                 S = salle_contenant_case(P, cel->coor.x, cel->coor.y);
+                
+                // Impossible que la flèche pointe sur un 1 
+                cl = initialiser_clause();
+                ajouter_variable_a_clause(&cl, creer_var_logique(1, coor_case_pointee.x, coor_case_pointee.y, true)); 
+                ajouter_clause_a_fnc(fnc, cl);
 
                 for (int k = 2; k <= S.taille; k++) { // pour toute valeur de case entre 2 et |C(S(x, y))|
                     cl = initialiser_clause();
@@ -170,8 +175,8 @@ void modeliser_regle_fleches(FNC* fnc, Plateau P) {
                     for (int i = 1; i <= k-1; i++) {
                         ajouter_variable_a_clause(&cl, creer_var_logique(i, cel->coor.x, cel->coor.y, false));
                     }
+                    ajouter_clause_a_fnc(fnc, cl);
                 }
-                ajouter_clause_a_fnc(fnc, cl);
                 cel = cel->suiv;
             }
         }
