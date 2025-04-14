@@ -23,7 +23,7 @@ int main (int argc, char **argv) {
 
     FNC* fnc = modeliser_jeu(P);
     sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "sat.dimacs");
-    //afficher_FNC(*fnc);
+    afficher_FNC(*fnc);
 
 
     // SOLVER
@@ -78,14 +78,13 @@ int main (int argc, char **argv) {
         // Remplissage du plateau avec les solutions
         for (k = 0; k < s->model.size; k++) {
             if (s->model.ptr[k] == l_True) { // cette variable est vraie
-                int x, y, val;
-                decodage_id(P.dim, P.val_max, k, &x, &y, &val);
-                printf("(%d, %d, %d)\n", val, x, y);
+                VarLogique dec = decodage_id(*fnc, k);
+                printf("(%d, %d, %d)\n", dec.val, dec.x, dec.y);
                 Case c;
-                c.coor = creer_coor(x, y);
+                c.coor = creer_coor(dec.x, dec.y);
                 c.type = TypeNombre;
-                c.val.nombre = val;
-                modifier_case(&P_Solution, x, y, c);
+                c.val.nombre = dec.val;
+                modifier_case(&P_Solution, dec.x, dec.y, c);
             }
         }
 

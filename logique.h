@@ -2,6 +2,7 @@
 #define _FNC_H_
 
 #define MAX_VAR 50
+#define MAX_VAR_TOTAL 1500
 
 #include <stdbool.h>
 
@@ -31,6 +32,7 @@ typedef struct {
     CellFNC* last;
     unsigned int taille;
     unsigned int nb_variables;
+    VarLogique liste_variables[MAX_VAR_TOTAL];
 } FNC;
 
 /* ====== FONCTIONS ======*/
@@ -45,6 +47,9 @@ void ajouter_variable_a_clause(Clause* cl, VarLogique var);
 
 /* Initialise une forme normale conjonctive vide (liste de clauses) */
 FNC* initialiser_FNC();
+bool var_logiques_equivalentes(VarLogique A, VarLogique B);
+/* Renvoie vrai si une variable est déjà présente dans une clause de la fnc */
+bool variable_existe_dans_fnc(FNC fnc, VarLogique var);
 /* Ajoute une clause a une forme normale conjonctive */
 void ajouter_clause_a_fnc(FNC* fnc, Clause cl);
 

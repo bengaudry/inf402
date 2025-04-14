@@ -2,7 +2,10 @@
 #include <stdio.h>
 
 #include "dimacs.h"
+#include "logique.h"
 
+
+#ifdef ENCODAGE_V1
 int encodage_id(int dim, int maxVal, VarLogique var) {
     int id = ((var.x - 1)*dim + (var.y - 1))*maxVal + var.val;
 
@@ -22,6 +25,20 @@ void decodage_id(int dim, int maxVal, int id, int* x, int* y, int* val) {
     *x = (case_id / dim) + 1;         // ligne (on remet de 0 à 1-indexé)
     *y = (case_id % dim) + 1;         // colonne (idem)
 }
+#endif
+
+#ifndef ENCODAGE_V1
+int encodage_id(FNC fnc, VarLogique var) {
+    for (int i = 0; i < fnc.nb_variables; i++) {
+        if (var_logiques_equivalentes(var, fnc.liste_variables[i])) return var.isneg ? -(i+1) : i+1;
+    } 
+    return -1;
+}
+
+VarLogique decodage_id(FNC fnc, int id) {
+    return fnc.liste_variables[id];
+}
+#endif
 
 void sortie_dimacs(FNC fnc, int dim, int maxVal, char *fichier_sortie){
     FILE *f;
@@ -32,14 +49,15 @@ void sortie_dimacs(FNC fnc, int dim, int maxVal, char *fichier_sortie){
     int id;
 
     //en-tete du fichier
-    fprintf(f, "p cnf %d %d\n", nb_var, fnc.taille);
+    fprintf(f, "p cnf %d %d\n", fnc.nb_variables, fnc.taille);
 
     //corps du fichier
     while (cel != NULL) {
         //ecriture d'une clause
         for (int i=0; i<cel->clause.taille; i++){
             var = cel->clause.variables[i];
-            id = encodage_id(dim, maxVal, var);
+            //id = encodage_id(dim, maxVal, var);
+            id = encodage_id(fnc, var);
 
             //ecriture de l'id
             fprintf(f, "%d ", id);

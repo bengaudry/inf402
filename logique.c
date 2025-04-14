@@ -37,6 +37,28 @@ FNC* initialiser_FNC() {
     return fnc;
 }
 
+/* Renvoie vrai si deux variables logiques sont égales à la négation près */
+bool var_logiques_equivalentes(VarLogique A, VarLogique B) {
+    return (A.val == B.val && A.x == B.x && A.y == B.y);
+}
+
+/* Renvoie vrai si une variable est déjà présente dans une clause de la fnc */
+bool variable_existe_dans_fnc(FNC fnc, VarLogique var) {
+    CellFNC* cel;
+    Clause cl;
+
+    cel = fnc.first;
+    while (cel != NULL) { // pour chaque clause
+        cl = cel->clause;
+        for (int i = 0; i < cl.taille; i++) { // pour chaque variable de la clause
+            VarLogique v2 = cl.variables[i];
+            if (var_logiques_equivalentes(v2, var)) return true;
+        }
+        cel = cel->suiv;
+    }
+    return false;
+}
+
 void ajouter_clause_a_fnc(FNC* fnc, Clause cl) {
     CellFNC *cell;
 
@@ -48,8 +70,14 @@ void ajouter_clause_a_fnc(FNC* fnc, Clause cl) {
     cell = malloc(sizeof(CellFNC));
     cell->clause = cl;
     cell->suiv = NULL;
-    
-    fnc->nb_variables += cl.taille;
+
+    for (int i = 0; i < cl.taille; i++) {
+        VarLogique var = cl.variables[i];
+        if (!variable_existe_dans_fnc(*fnc, var)) {
+            // Une nouvelle var est introduite
+            fnc->liste_variables[fnc->nb_variables++] = creer_var_logique(var.val, var.x, var.y, false);
+        }
+    }
 
     if (fnc->taille == 0) {
         fnc->first = cell;
