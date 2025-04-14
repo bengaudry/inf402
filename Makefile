@@ -1,7 +1,7 @@
 CC=clang
 CFLAGS=-Werror
 
-EXECUTABLES = test_plateau test_listes test_logique test_modelisation test_export_dimacs main
+EXECUTABLES = test_plateau test_listes test_logique test_modelisation test_export_dimacs test_encodage_dimacs main
 
 all: $(EXECUTABLES)
 
@@ -27,6 +27,9 @@ test_encodage_dimacs: tests/test_encodage_dimacs.c dimacs.o modelisation.o plate
 	$(CC) $(CFLAGS) -o $@ $^
 
 test_export_dimacs: tests/test_export_dimacs.c dimacs.o modelisation.o plateau.o logique.o commun.o listes.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+test_sat_solver: tests/test_sat_solver.c sat_solver.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 
