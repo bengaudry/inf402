@@ -22,8 +22,12 @@ int main (int argc, char **argv) {
     afficher_plateau(P);
 
     FNC* fnc = modeliser_jeu(P);
-    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "sat.dimacs");
     //afficher_FNC(*fnc);
+
+    //printf("\n\n> Transformation en 3-SAT :\n");
+    fnc = sat_vers_3sat(fnc);
+    // afficher_FNC(*fnc);
+    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "sat.dimacs");
 
     // SOLVER
     solver* s = solver_new();
