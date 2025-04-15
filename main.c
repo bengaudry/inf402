@@ -22,21 +22,21 @@ int main (int argc, char **argv) {
     afficher_plateau(P);
 
     FNC* fnc = modeliser_jeu(P);
-    //afficher_FNC(*fnc);
+    afficher_FNC(*fnc);
 
-    //printf("\n\n> Transformation en 3-SAT :\n");
+    printf("\n\n> Transformation en 3-SAT :\n");
     fnc = sat_vers_3sat(fnc);
-    // afficher_FNC(*fnc);
-    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "sat.dimacs");
+    afficher_FNC(*fnc);
+    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "3sat.dimacs");
 
     // SOLVER
     solver* s = solver_new();
     lbool   st;
     FILE *  f_dimacs;
 
-    f_dimacs = fopen("sat.dimacs", "rb");
+    f_dimacs = fopen("3sat.dimacs", "rb");
     if (f_dimacs == NULL) {
-        fprintf(stderr, "ERROR! Could not open file: sat.dimacs\n");
+        fprintf(stderr, "ERROR! Could not open file: 3sat.dimacs\n");
         exit(1);
     }
     st = parse_DIMACS(f_dimacs, s);

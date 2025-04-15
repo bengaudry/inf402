@@ -144,7 +144,7 @@ FNC* sat_vers_3sat(FNC* fnc_sat) {
             ajouter_clause_a_fnc(fnc_3sat, cl_3sat);
 
             // Clauses du milieu : (¬zk-1+xk+zk)
-            for (int k = 2; k <= cl_3sat.taille-2; k++) {
+            for (int k = 2; k <= cl_3sat.taille; k++) {
                 cl_3sat = initialiser_clause();
 
                 VarLogique zp = creer_var_logique(-nb_var_introduites, -nb_var_introduites, -nb_var_introduites, true); //(¬zk-1)
