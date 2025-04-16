@@ -1,12 +1,17 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "plateau.h"
 #include "logique.h"
 #include "modelisation.h"
 #include "dimacs.h"
+
 #include "minisat_src/minisat.h"
 #include "minisat_src/solver.h"
+#include "sat_solver.h"
+
+// #define USING_CUSTOM_SOLVER
 
 int main (int argc, char **argv) {
     Plateau P;
@@ -22,13 +27,14 @@ int main (int argc, char **argv) {
     afficher_plateau(P);
 
     FNC* fnc = modeliser_jeu(P);
-    afficher_FNC(*fnc);
+    //afficher_FNC(*fnc);
 
     printf("\n\n> Transformation en 3-SAT :\n");
     fnc = sat_vers_3sat(fnc);
-    afficher_FNC(*fnc);
+    //afficher_FNC(*fnc);
     sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "3sat.dimacs");
 
+#ifndef USING_CUSTOM_SOLVER
     // SOLVER
     solver* s = solver_new();
     lbool   st;
@@ -74,5 +80,39 @@ int main (int argc, char **argv) {
     }
 
     solver_delete(s);
+#endif
+
+#ifdef USING_CUSTOM_SOLVER
+    printf("\n> Solving ...\n");
+    SS_FNC ss_fnc;
+    ss_fnc = lire_fichier_dimacs("3sat.dimacs");
+    //afficher_fnc(ss_fnc);
+
+    SS_REPONSE rep;
+    rep.taille = 0;
+    bool succes = solve_3sat(ss_fnc, &rep);
+
+    if (!succes) {
+        printf("INSAT\n");
+        return 1;
+    }
+
+    for (int i = 0;  i <= rep.taille; i++) {
+        int k = rep.valeurs[i];
+        if (k > 0) { // variable vraie
+            printf("%d ", k);
+            VarLogique dec = decodage_id(*fnc, k-1);
+     		//printf("(%d, %d, %d)\n", dec.val, dec.x, dec.y);
+            Case c;
+            c.coor = creer_coor(dec.x, dec.y);
+            c.type = TypeNombre;
+            c.val.nombre = dec.val;
+            modifier_case(&P, dec.x, dec.y, c);
+        }
+    }
+
+    printf("\n\n> SOLUTION\n");
+    afficher_plateau(P);
+#endif
     return 0;
 }

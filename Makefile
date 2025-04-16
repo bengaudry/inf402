@@ -18,7 +18,7 @@ solver.o: minisat_src/solver.c minisat_src/solver.h
 # ====== MINISAT ===== #
 
 
-main: main.c plateau.o listes.o commun.o logique.o minisat.o solver.o modelisation.o dimacs.o
+main: main.c plateau.o listes.o commun.o logique.o minisat.o solver.o modelisation.o dimacs.o sat_solver.o
 	$(CC) $(CFLAGS) -lm -o $@ $^
 
 test_plateau: tests/test_plateau.c plateau.o listes.o commun.o logique.o

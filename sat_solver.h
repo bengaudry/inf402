@@ -22,6 +22,14 @@ typedef struct {
 } SS_REPONSE;
 
 SS_FNC lire_fichier_dimacs(char *fichier_dimacs);
+
 void afficher_fnc(SS_FNC fnc);
+
+bool eval_clause(SS_CLAUSE clause, bool* assignation);
+
+/* Résoud un problème de type 3-SAT et renvoie vrai si le problème admet une solution
+ * Si c'est le cas, le tableau contenant la solution est passé dans le pointeur rep
+ */
+bool solve_3sat(SS_FNC, SS_REPONSE* rep);
 
 #endif
