@@ -11,7 +11,6 @@ typedef struct {
 
 typedef struct {
     SS_CLAUSE clauses[SS_MAX_CLAUSES];
-    unsigned int taille;
     unsigned int nb_var;
     unsigned int nb_clauses;
 } SS_FNC;
@@ -31,5 +30,11 @@ bool eval_clause(SS_CLAUSE clause, bool* assignation);
  * Si c'est le cas, le tableau contenant la solution est passé dans le pointeur rep
  */
 bool solve_3sat(SS_FNC, SS_REPONSE* rep);
+
+
+SS_FNC dpll_reduction(SS_FNC fnc);
+SS_FNC dpll_elim_litteraux_isoles(SS_FNC fnc);
+int dpll_assignation_variable(SS_FNC fnc, SS_FNC* assign, bool var_vraie);
+bool dpll_solver(SS_FNC fnc, SS_REPONSE *rep);
 
 #endif

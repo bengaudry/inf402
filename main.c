@@ -11,7 +11,7 @@
 #include "minisat_src/solver.h"
 #include "sat_solver.h"
 
-// #define USING_CUSTOM_SOLVER
+#define USING_CUSTOM_SOLVER
 
 int main (int argc, char **argv) {
     Plateau P;

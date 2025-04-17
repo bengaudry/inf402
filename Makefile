@@ -41,6 +41,9 @@ test_export_dimacs: tests/test_export_dimacs.c dimacs.o modelisation.o plateau.o
 
 test_sat_solver: tests/test_sat_solver.c sat_solver.o
 	$(CC) $(CFLAGS) -o $@ $^
+
+test_dpll_solver: tests/test_dpll_solver.c sat_solver.o
+	$(CC) $(CFLAGS) -o $@ $^
 	
 clean:
 	rm -rf $(EXECUTABLES) *.o
