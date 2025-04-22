@@ -28,11 +28,17 @@ int main (int argc, char **argv) {
 
     FNC* fnc = modeliser_jeu(P);
     //afficher_FNC(*fnc);
+    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "sat.dimacs");
+    printf("\n> STATS\n");
+    printf("- %d variables logiques\n", fnc->nb_variables);
+    printf("- %d clauses\n", fnc->taille);
 
-    printf("\n\n> Transformation en 3-SAT :\n");
     fnc = sat_vers_3sat(fnc);
     //afficher_FNC(*fnc);
     sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "3sat.dimacs");
+    printf("\n> STATS 3-SAT\n");
+    printf("- %d variables logiques\n", fnc->nb_variables);
+    printf("- %d clauses\n", fnc->taille);
 
 #ifndef USING_CUSTOM_SOLVER
     // SOLVER
@@ -55,10 +61,10 @@ int main (int argc, char **argv) {
     if ( st == l_True )
     {
         int k;
-        printf( "\nSatisfying solution: " );
+        /* printf( "\nSatisfying solution: " );
         for ( k = 0; k < s->model.size; k++ )
             printf( "x%d=%d ", k, s->model.ptr[k] == l_True );
-        printf( "\n" );
+        printf( "\n" ); */
 
         // Remplissage du plateau avec les solutions
         for (k = 0; k < s->model.size; k++) {
