@@ -27,18 +27,8 @@ int main (int argc, char **argv) {
     afficher_plateau(P);
 
     FNC* fnc = modeliser_jeu(P);
-    //afficher_FNC(*fnc);
-    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "sat.dimacs");
-    printf("\n> STATS\n");
-    printf("- %d variables logiques\n", fnc->nb_variables);
-    printf("- %d clauses\n", fnc->taille);
-
     fnc = sat_vers_3sat(fnc);
-    //afficher_FNC(*fnc);
     sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "3sat.dimacs");
-    printf("\n> STATS 3-SAT\n");
-    printf("- %d variables logiques\n", fnc->nb_variables);
-    printf("- %d clauses\n", fnc->taille);
 
 #ifndef USING_CUSTOM_SOLVER
     // SOLVER
