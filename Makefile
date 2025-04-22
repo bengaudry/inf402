@@ -44,3 +44,7 @@ test_sat_solver: tests/test_sat_solver.c sat_solver.o
 	
 clean:
 	rm -rf $(EXECUTABLES) *.o
+
+fclean:
+	rm -rf $(EXECUTABLES) *.o
+	rm -rf *.dimacs
