@@ -55,37 +55,25 @@ bool plateaux_egaux(Plateau P1, Plateau P2) {
     return true;
 }
 
-//arg1: chemin_fichier_plateau
-int main(int argc, char **argv) {
+//Insatisfaisable retourne : 1
+//Satisfaisable retourne : 0
+int creer_solution_plateaux(Plateau *P) {
 
-    /*----- LECTURE PLATEAU -----*/
-    Plateau P;
-    Plateau P_joueur;
-    ErreurPlateau err;
+    /*----- TRANSFORMATION FNC -----*/
 
-    if (argc != 2) {
-        fprintf(stderr, "Utilisation: %s <chemin_fichier_plateau>\n", argv[0]);
-        exit(1);
-    }
-
-    err = lire_fichier_plateau(argv[1], &P);
-    if (err != OK) erreur_plateau(err);
-    P_joueur = P;
-    //afficher_plateau(P);
-
-    FNC* fnc = modeliser_jeu(P);
+    FNC *fnc = modeliser_jeu(*P);
 
     //afficher_FNC(*fnc);
-    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "jeu.dimacs");
-
-    /*----- SOLVER -----*/
+    sortie_dimacs(*fnc, dimension_plateau(*P), val_max_plateau(*P), "plateau.dimacs");
+    
+    /*----- SOLVEUR ------*/
     solver* s = solver_new();
     lbool   st;
     FILE *  f_dimacs;
 
-    f_dimacs = fopen("jeu.dimacs", "rb");
+    f_dimacs = fopen("plateau.dimacs", "rb");
     if (f_dimacs == NULL) {
-        fprintf(stderr, "ERROR! Could not open file: jeu.dimacs\n");
+        fprintf(stderr, "ERROR! Could not open file: %s\n", "plateau.dimacs");
         exit(1);
     }
     st = parse_DIMACS(f_dimacs, s);
@@ -112,17 +100,41 @@ int main(int argc, char **argv) {
                 c.coor = creer_coor(dec.x, dec.y);
                 c.type = TypeNombre;
                 c.val.nombre = dec.val;
-                modifier_case(&P, dec.x, dec.y, c);
+                modifier_case(P, dec.x, dec.y, c);
             }
         }
-
-        //printf("\n> SOLUTION\n");
-        //afficher_plateau(P);
     } else {
+        // Pas de solution alors on retourne 1
         printf("Pas de solution, ce jeu est insatisfaisable.\n");
         return 1;
     }
-    solver_delete(s);    
+    //Une solution a été trouvée, on retourne 0
+    solver_delete(s); 
+    return 0;
+}
+
+//arg1: chemin_fichier_plateau
+int main(int argc, char **argv) {
+
+    /*----- LECTURE PLATEAU -----*/
+    Plateau P, P_joueur;
+    ErreurPlateau err;
+
+    if (argc != 2) {
+        fprintf(stderr, "Utilisation: %s <chemin_fichier_plateau>\n", argv[0]);
+        exit(1);
+    }
+
+    err = lire_fichier_plateau(argv[1], &P);
+    if (err != OK) erreur_plateau(err);
+    P_joueur = P;
+
+    // S'il n'y a pas de solution on termine le programme
+    if (creer_solution_plateaux(&P) == 1) {
+        printf("Ce plateau n'est pas résolvable.\n");
+        printf("Fin de la partie.\n");
+        return 1;
+    }
 
     /*----- JOUER PARTIE -----*/
     int x,y;
@@ -135,7 +147,6 @@ int main(int argc, char **argv) {
     afficher_plateau(P_joueur);
     //boucle de jeu
     while (nb_cases_plns < nb_cases_total) {
-        //afficher_plateau(P_joueur);
         printf("\n(1) pour demander un indice\n");
         printf("(2) pour remplir une case\n");
         scanf("%d", &choix);
@@ -146,7 +157,7 @@ int main(int argc, char **argv) {
             scanf("%d", &choix);
         }
 
-        //donner un indice
+        //donner un indice (choix == 1)
         if (choix == 1) {
             printf("\nEntrez une case à dévoiler: x y\n");
             scanf("%d %d", &x, &y);
@@ -168,6 +179,7 @@ int main(int argc, char **argv) {
             if (case_plateau(P_joueur, x, y).type == TypeVide) nb_cases_plns++;
             //modification de la case indice choisie
             modifier_case(&P_joueur, x, y, case_plateau(P, x, y));
+
         }
 
         //remplir une case (choix == 2)
@@ -193,6 +205,21 @@ int main(int argc, char **argv) {
             if (case_plateau(P_joueur, c.coor.x, c.coor.y).type == TypeVide) nb_cases_plns++;
             //modification de la case
             modifier_case(&P_joueur, c.coor.x, c.coor.y, c);
+
+            P = P_joueur;
+
+            //printf("plateau P avant solution");
+            //afficher_plateau(P);
+
+            // S'il n'y a pas de solution on termine le programme
+            if (creer_solution_plateaux(&P) == 1) {
+                printf("Ce plateau n'est plus résolvable.\n");
+                printf("Fin de la partie.\n");
+                return 1;
+            }
+            
+            //printf("plateau P apres solution");
+            //afficher_plateau(P);
         }
         printf("\n");
         afficher_plateau(P_joueur);
@@ -203,7 +230,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    printf("\n\nNiveau échoué... voici le plateau réponse\n");
+    printf("\n\nNiveau échoué... voici un plateau réponse\n");
     afficher_plateau(P);
-    return 0;
+    return 1;
 }
