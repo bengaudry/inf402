@@ -37,6 +37,7 @@ int main (int argc, char **argv) {
 #endif
 
 #ifdef USING_CUSTOM_SOLVER
+    fnc = modeliser_jeu(P);
     fnc = sat_vers_3sat(fnc);
     sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "3sat.dimacs");
 

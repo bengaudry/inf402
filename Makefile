@@ -1,7 +1,7 @@
 CC=clang
 CFLAGS=-Werror
 
-EXECUTABLES = test_plateau test_listes test_logique test_modelisation test_export_dimacs test_sat_solver main afficher_modelisation jeu
+EXECUTABLES = test_plateau test_listes test_logique test_modelisation test_export_dimacs test_sat_solver afficher_solution afficher_modelisation jeu
 
 all: $(EXECUTABLES)
 
@@ -10,7 +10,7 @@ all: $(EXECUTABLES)
 
 # ===== EXECUTABLES ===== #
 
-main: main.c plateau.o listes.o commun.o logique.o modelisation.o dimacs.o sat_solver.o minisat.o
+afficher_solution: afficher_solution.c plateau.o listes.o commun.o logique.o modelisation.o dimacs.o sat_solver.o minisat.o
 	$(CC) $(CFLAGS) -lm -o $@ $^
 
 afficher_modelisation: afficher_modelisation.c plateau.o listes.o commun.o logique.o modelisation.o dimacs.o
