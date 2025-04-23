@@ -16,6 +16,7 @@
 int main (int argc, char **argv) {
     Plateau P;
     ErreurPlateau err;
+    FNC* fnc;
 
     if (argc != 2) {
         fprintf(stderr, "Utilisation: %s <chemin_fichier_plateau>\n", argv[0]);
@@ -26,9 +27,8 @@ int main (int argc, char **argv) {
     if (err != OK) erreur_plateau(err);
     afficher_plateau(P);
 
-    FNC* fnc = modeliser_jeu(P);
-    fnc = sat_vers_3sat(fnc);
-    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "3sat.dimacs");
+    fnc = modeliser_jeu(P);
+    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "sat.dimacs");
 
 #ifndef USING_CUSTOM_SOLVER
     // SOLVER
@@ -36,9 +36,9 @@ int main (int argc, char **argv) {
     lbool   st;
     FILE *  f_dimacs;
 
-    f_dimacs = fopen("3sat.dimacs", "rb");
+    f_dimacs = fopen("sat.dimacs", "rb");
     if (f_dimacs == NULL) {
-        fprintf(stderr, "ERROR! Could not open file: 3sat.dimacs\n");
+        fprintf(stderr, "ERROR! Could not open file: sat.dimacs\n");
         exit(1);
     }
     st = parse_DIMACS(f_dimacs, s);
@@ -79,6 +79,9 @@ int main (int argc, char **argv) {
 #endif
 
 #ifdef USING_CUSTOM_SOLVER
+    fnc = sat_vers_3sat(fnc);
+    sortie_dimacs(*fnc, dimension_plateau(P), val_max_plateau(P), "3sat.dimacs");
+
     printf("\n> Solving ...\n");
     SS_FNC ss_fnc;
     ss_fnc = lire_fichier_dimacs("3sat.dimacs");

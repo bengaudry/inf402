@@ -7,12 +7,6 @@
 #include "modelisation.h"
 #include "dimacs.h"
 
-#include "minisat_src/minisat.h"
-#include "minisat_src/solver.h"
-#include "sat_solver.h"
-
-// #define USING_CUSTOM_SOLVER
-
 int main (int argc, char **argv) {
     Plateau P;
     ErreurPlateau err;
@@ -32,7 +26,7 @@ int main (int argc, char **argv) {
     afficher_FNC(*fnc);
     printf("\n> STATS\n");
     printf("- %d variables logiques\n", fnc->nb_variables);
-    printf("- %d clauses\n", fnc->taille);
+    printf("- %d clauses\n\n", fnc->taille);
 
     printf("> Modélisation en 3-SAT :\n");
     fnc = sat_vers_3sat(fnc);

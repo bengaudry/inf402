@@ -8,3 +8,5 @@ test_encodage_dimacs
 test_sat_solver
 *.dimacs
 main
+jeu
+afficher_modelisation

@@ -22,7 +22,7 @@ main: main.c plateau.o listes.o commun.o logique.o minisat.o solver.o modelisati
 	$(CC) $(CFLAGS) -lm -o $@ $^
 
 afficher_modelisation: afficher_modelisation.c plateau.o listes.o commun.o logique.o modelisation.o dimacs.o
-	$(CC) $(CFLAGS) -lm -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 jeu: jeu.c plateau.o listes.o commun.o logique.o minisat.o solver.o modelisation.o dimacs.o
 	$(CC) $(CFLAGS) -lm -o $@ $^
