@@ -7,9 +7,7 @@
 #include "modelisation.h"
 #include "dimacs.h"
 #include "commun.h"
-
-#include "minisat_src/minisat.h"
-#include "minisat_src/solver.h"
+#include "minisat.h"
 
 int nombre_cases_pleines(Plateau P){
     int nb_cases_pleines = 0;
@@ -31,6 +29,8 @@ bool fleches_egales(Fleche f1, Fleche f2) {
 }
 
 bool cases_egales(Case c1, Case c2) {
+    if (c1.type != c2.type) return false;
+
     if (c1.type == TypeNombre) {
         return (coor_egales(c1.coor, c2.coor) && c1.type == c2.type && c1.val.nombre == c2.val.nombre);
     }
@@ -55,135 +55,57 @@ bool plateaux_egaux(Plateau P1, Plateau P2) {
     return true;
 }
 
-//Insatisfaisable retourne : 1
-//Satisfaisable retourne : 0
-int creer_solution_plateaux(Plateau *P) {
-
-    /*----- TRANSFORMATION FNC -----*/
-
-    FNC *fnc = modeliser_jeu(*P);
-
-    //afficher_FNC(*fnc);
-    sortie_dimacs(*fnc, dimension_plateau(*P), val_max_plateau(*P), "plateau.dimacs");
-    
-    /*----- SOLVEUR ------*/
-    solver* s = solver_new();
-    lbool   st;
-    FILE *  f_dimacs;
-
-    f_dimacs = fopen("plateau.dimacs", "rb");
-    if (f_dimacs == NULL) {
-        fprintf(stderr, "ERROR! Could not open file: %s\n", "plateau.dimacs");
-        exit(1);
-    }
-    st = parse_DIMACS(f_dimacs, s);
-    fclose(f_dimacs);
-
-    s->verbosity = 0;
-    st = solver_solve(s,0,0);
-
-    // print the sat assignment
-    if ( st == l_True )
-    {
-        int k;
-        //printf( "\nSatisfying solution: " );
-        for ( k = 0; k < s->model.size; k++ )
-            //printf( "x%d=%d ", k, s->model.ptr[k] == l_True );
-        //printf( "\n" );
-
-        // Remplissage du plateau avec les solutions
-        for (k = 0; k < s->model.size; k++) {
-            if (s->model.ptr[k] == l_True) { // cette variable est vraie
-                VarLogique dec = decodage_id(*fnc, k);
-     		    //printf("(%d, %d, %d)\n", dec.val, dec.x, dec.y);
-                Case c;
-                c.coor = creer_coor(dec.x, dec.y);
-                c.type = TypeNombre;
-                c.val.nombre = dec.val;
-                modifier_case(P, dec.x, dec.y, c);
-            }
-        }
-    } else {
-        // Pas de solution alors on retourne 1
-        printf("Pas de solution, ce jeu est insatisfaisable.\n");
-        return 1;
-    }
-    //Une solution a été trouvée, on retourne 0
-    solver_delete(s); 
-    return 0;
+int demander_choix_joueur() {
+    int choix = -1;
+    do {
+        printf("\n(1) pour remplir une case\n");
+        printf("(2) pour demander un indice\n");
+        printf("(3) pour abandonner\n");
+        scanf("%d", &choix);
+    } while (choix != 1 && choix != 2 && choix != 3);
+    return choix;
 }
 
-//arg1: chemin_fichier_plateau
-int main(int argc, char **argv) {
+void attendre() {
+    int c;
+    printf("Appuyez sur n'importe quelle touche pour continuer...\n");
+    
+    // Vider le buffer
+    while ((c = getchar()) != '\n' && c != EOF);
+
+    // Attendre un nouvel appui
+    getchar();
+}
+
+bool jouer_plateau(char* fichier_plateau, unsigned int niv) {
+    system("clear");
 
     /*----- LECTURE PLATEAU -----*/
     Plateau P, P_joueur;
     ErreurPlateau err;
 
-    if (argc != 2) {
-        fprintf(stderr, "Utilisation: %s <chemin_fichier_plateau>\n", argv[0]);
-        exit(1);
-    }
-
-    err = lire_fichier_plateau(argv[1], &P);
+    err = lire_fichier_plateau(fichier_plateau, &P);
     if (err != OK) erreur_plateau(err);
-    P_joueur = P;
-
-    // S'il n'y a pas de solution on termine le programme
-    if (creer_solution_plateaux(&P) == 1) {
-        printf("Ce plateau n'est pas résolvable.\n");
-        printf("Fin de la partie.\n");
-        return 1;
-    }
+    err = lire_fichier_plateau(fichier_plateau, &P_joueur);
 
     /*----- JOUER PARTIE -----*/
-    int x,y;
-    int nb_cases_total = dimension_plateau(P)*dimension_plateau(P);
-    int nb_cases_plns = nombre_cases_pleines(P_joueur);
+    int x, y;
+    unsigned int dim = dimension_plateau(P);
+    int nb_cases_total = dim*dim;
+    int nb_cases_pleines = nombre_cases_pleines(P_joueur);
     Case c;
     c.type = TypeNombre;
     int choix;
 
-    afficher_plateau(P_joueur);
     //boucle de jeu
-    while (nb_cases_plns < nb_cases_total) {
-        printf("\n(1) pour demander un indice\n");
-        printf("(2) pour remplir une case\n");
-        scanf("%d", &choix);
+    while (nb_cases_pleines < nb_cases_total) {
+        system("clear");
+        printf(">---- NIVEAU %d ----<\n", niv);
+        afficher_plateau(P_joueur);
+        choix = demander_choix_joueur();
 
-        while (choix != 1 && choix != 2) {
-            printf("\n(1) pour demander un indice\n");
-            printf("(2) pour remplir une case\n");
-            scanf("%d", &choix);
-        }
-
-        //donner un indice (choix == 1)
+        // Remplissage d'une case
         if (choix == 1) {
-            printf("\nEntrez une case à dévoiler: x y\n");
-            scanf("%d %d", &x, &y);
-    
-            //verifier les bonnes coordonnees
-            while (case_dans_plateau(P_joueur, creer_coor(x, y)) == false) {
-                printf("\nCoordonnees incorrectes : 1 <= x,y <= %d\n", dimension_plateau(P_joueur));
-                printf("Entrez de nouvelles coordonnees: x y\n");
-                scanf("%d %d", &x, &y);
-            }
-
-            //verifier que la case contienne un nombre
-            while (case_plateau(P, x, y).type != TypeNombre) {
-                printf("\nCette case contient une flèche\n");
-                printf("Entrez de nouvelles coordonnees: x y\n");
-                scanf("%d %d", &x, &y);
-            }
-            //si la case etait vide on incremente
-            if (case_plateau(P_joueur, x, y).type == TypeVide) nb_cases_plns++;
-            //modification de la case indice choisie
-            modifier_case(&P_joueur, x, y, case_plateau(P, x, y));
-
-        }
-
-        //remplir une case (choix == 2)
-        else {
             printf("\nEntrez une case: x y valeur:\n");
             scanf("%d %d %d", &c.coor.x, &c.coor.y, &c.val.nombre);
             
@@ -202,35 +124,86 @@ int main(int argc, char **argv) {
             }            
 
             //on incrémente si la case etait vide
-            if (case_plateau(P_joueur, c.coor.x, c.coor.y).type == TypeVide) nb_cases_plns++;
+            if (case_plateau(P_joueur, c.coor.x, c.coor.y).type == TypeVide) nb_cases_pleines++;
             //modification de la case
             modifier_case(&P_joueur, c.coor.x, c.coor.y, c);
 
             P = P_joueur;
+        } 
 
-            //printf("plateau P avant solution");
-            //afficher_plateau(P);
+        // Donner un indice
+        if (choix == 2) {
+            if (!generer_solution(P_joueur, &P)) {
+                printf("\nVotre jeu n'admet pas de solution tel quel, essayez de modifier la valeur de certaines cases...\n\n");
+                attendre();
+            } else {
 
-            // S'il n'y a pas de solution on termine le programme
-            if (creer_solution_plateaux(&P) == 1) {
-                printf("Ce plateau n'est plus résolvable.\n");
-                printf("Fin de la partie.\n");
-                return 1;
+                printf("\nEntrez une case à dévoiler: x y\n");
+                scanf("%d %d", &x, &y);
+
+                //verifier les bonnes coordonnees
+                while (case_dans_plateau(P_joueur, creer_coor(x, y)) == false) {
+                    printf("\nCoordonnees incorrectes : 1 <= x,y <= %d\n", dimension_plateau(P_joueur));
+                    printf("Entrez de nouvelles coordonnees: x y\n");
+                    scanf("%d %d", &x, &y);
+                }
+
+                //verifier que la case contienne un nombre
+                while (case_plateau(P, x, y).type != TypeNombre) {
+                    printf("\nCette case contient une flèche\n");
+                    printf("Entrez de nouvelles coordonnees: x y\n");
+                    scanf("%d %d", &x, &y);
+                }
+                //si la case etait vide on incremente
+                if (case_plateau(P_joueur, x, y).type == TypeVide) nb_cases_pleines++;
+                //modification de la case indice choisie
+                modifier_case(&P_joueur, x, y, case_plateau(P, x, y));
             }
-            
-            //printf("plateau P apres solution");
-            //afficher_plateau(P);
         }
-        printf("\n");
-        afficher_plateau(P_joueur);
+
+        // Abandon de la partie
+        if (choix == 3) break;
     }
 
-    if (plateaux_egaux(P_joueur, P)) {
+    bool existe_solution = generer_solution(P_joueur, &P);
+    if (existe_solution && plateaux_egaux(P_joueur, P)) {
         printf("\n\nBRAVO, niveau réussi\n");
-        return 0;
+        return true;
     }
 
     printf("\n\nNiveau échoué... voici un plateau réponse\n");
     afficher_plateau(P);
-    return 1;
+    return false;
+}
+
+int demander_si_joueur_veut_continuer() {
+    int choix = -1;
+    do {
+        printf("\n(1) pour jouer le niveau suivant\n");
+        printf("(2) pour rejouer ce niveau\n");
+        printf("(3) pour arrêter de jouer\n");
+        scanf("%d", &choix);
+    } while (choix != 1 && choix != 2 && choix != 3);
+    return choix;
+}
+
+//arg1: chemin_fichier_plateau
+int main(int argc, char **argv) {
+    int choix = 2;
+    unsigned int nb_succes = 0;
+    unsigned int nb_parties = 0;
+    int niv_courant = 2;
+
+    do {
+        nb_parties++;
+        char nom_plateau[100];
+        sprintf(nom_plateau, "plateaux/%dx%d.txt", niv_courant, niv_courant);
+        if (jouer_plateau(nom_plateau, niv_courant-1)) nb_succes++;
+        choix = demander_si_joueur_veut_continuer();
+        if (choix == 1) niv_courant++;
+    } while ((choix == 1 || choix == 2) && niv_courant <= 6);
+
+    printf("> %d victoires / %d défaites\n", nb_succes, nb_parties-nb_succes);
+
+    return 0;
 }

@@ -10,3 +10,5 @@ test_sat_solver
 main
 jeu
 afficher_modelisation
+.tmp
+.nfs*

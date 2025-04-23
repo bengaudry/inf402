@@ -8,23 +8,15 @@ all: $(EXECUTABLES)
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $<
 
+# ===== EXECUTABLES ===== #
 
-# ====== MINISAT ===== #
-minisat.o: minisat_src/minisat.c minisat_src/minisat.h
-	$(CC) -c $<
-
-solver.o: minisat_src/solver.c minisat_src/solver.h
-	$(CC) -c $<
-# ====== MINISAT ===== #
-
-
-main: main.c plateau.o listes.o commun.o logique.o minisat.o solver.o modelisation.o dimacs.o sat_solver.o
+main: main.c plateau.o listes.o commun.o logique.o modelisation.o dimacs.o sat_solver.o minisat.o
 	$(CC) $(CFLAGS) -lm -o $@ $^
 
 afficher_modelisation: afficher_modelisation.c plateau.o listes.o commun.o logique.o modelisation.o dimacs.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-jeu: jeu.c plateau.o listes.o commun.o logique.o minisat.o solver.o modelisation.o dimacs.o
+jeu: jeu.c plateau.o listes.o commun.o logique.o modelisation.o dimacs.o minisat.o
 	$(CC) $(CFLAGS) -lm -o $@ $^
 
 # ===== TESTS ===== #
