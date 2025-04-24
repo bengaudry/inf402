@@ -30,7 +30,6 @@ bool generer_solution(Plateau P, Plateau* P_solution) {
             if (k == 0) break;
             if (k > 0) {
                 VarLogique dec = decodage_id(*fnc, k-1);
-     		    //printf("(%d, %d, %d)\n", dec.val, dec.x, dec.y);
                 Case c;
                 c.coor = creer_coor(dec.x, dec.y);
                 c.type = TypeNombre;
@@ -40,7 +39,7 @@ bool generer_solution(Plateau P, Plateau* P_solution) {
         }
         fclose(rep);
         return true;
-    } 
+    }
     
     fclose(rep);
     return false;

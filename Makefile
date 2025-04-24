@@ -44,4 +44,4 @@ clean:
 
 fclean:
 	rm -rf $(EXECUTABLES) *.o
-	rm -rf *.dimacs
+	rm -rf *.dimacs .tmp
