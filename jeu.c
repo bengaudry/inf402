@@ -167,6 +167,8 @@ bool jouer_plateau(char* fichier_plateau, unsigned int niv) {
 
     bool existe_solution = generer_solution(P_joueur, &P);
     if (existe_solution && plateaux_egaux(P_joueur, P)) {
+        system("clear");
+        afficher_plateau(P_joueur);
         printf("\n\nBRAVO, niveau réussi\n");
         return true;
     }
