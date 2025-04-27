@@ -1,7 +1,8 @@
 CC=clang
 CFLAGS=-Werror
 
-EXECUTABLES = test_plateau test_listes test_logique test_modelisation test_export_dimacs test_sat_solver afficher_solution afficher_modelisation jeu
+EXECUTABLES = afficher_solution afficher_modelisation jeu
+TESTS =  test_plateau test_listes test_logique test_modelisation test_export_dimacs test_sat_solver
 
 all: $(EXECUTABLES)
 
@@ -38,10 +39,13 @@ test_export_dimacs: tests/test_export_dimacs.c dimacs.o modelisation.o plateau.o
 
 test_sat_solver: tests/test_sat_solver.c sat_solver.o
 	$(CC) $(CFLAGS) -o $@ $^
+
+
+# ===== CLEANING RULES ===== #
 	
 clean:
-	rm -rf $(EXECUTABLES) *.o
+	rm -rf $(EXECUTABLES) $(TESTS) *.o
 
 fclean:
-	rm -rf $(EXECUTABLES) *.o
+	rm -rf $(EXECUTABLES) $(TESTS) *.o
 	rm -rf *.dimacs .tmp

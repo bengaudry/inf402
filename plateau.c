@@ -207,6 +207,7 @@ ErreurPlateau lire_fichier_plateau(char *chemin, Plateau *P) {
 
         for (int j = 1; j <= taille_salle; j++) {
             if (!fscanf(f_plateau, "%d %d", &coor.x, &coor.y)) return ErreurCoordonnees;
+            printf("coor: %d %d\n", coor.x, coor.y);
             if (!case_dans_plateau(*P, coor)) return ErreurCoordonnees;
             if (coor.x < 1 || coor.x > dim || coor.y < 1 || coor.y > dim) return ErreurCoordonnees;
             total_cases_salles++;

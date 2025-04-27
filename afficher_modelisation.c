@@ -27,13 +27,15 @@ int main (int argc, char **argv) {
     printf("\n> STATS\n");
     printf("- %d variables logiques\n", fnc->nb_variables);
     printf("- %d clauses\n\n", fnc->taille);
-
+    sortie_dimacs(*fnc, 0, 0, "sat.dimacs");
+    
     printf("> Modélisation en 3-SAT :\n");
     fnc = sat_vers_3sat(fnc);
     afficher_FNC(*fnc);
     printf("\n> STATS 3-SAT\n");
     printf("- %d variables logiques\n", fnc->nb_variables);
     printf("- %d clauses\n", fnc->taille);
+    sortie_dimacs(*fnc, 0, 0, "3sat.dimacs");
 
     return 0;
 }

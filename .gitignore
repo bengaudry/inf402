@@ -10,5 +10,6 @@ test_sat_solver
 jeu
 afficher_modelisation
 afficher_solution
+convertisseur_3sat
 .tmp
 .nfs*
